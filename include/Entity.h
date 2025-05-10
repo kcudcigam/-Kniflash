@@ -1,0 +1,24 @@
+#pragma once
+#include <random>
+#include "SFML/Graphics.hpp"
+
+class Entity {
+private:
+    Entity* ancestor;
+    uint64_t id;
+    std :: map<std :: string, bool> tags;
+protected:
+    std :: vector<Entity*> opponents;
+public:
+    sf :: Transform transform;
+    Entity(const std :: vector<std :: string> &tag = {});
+    virtual ~Entity();
+    const Entity* super() const;
+    const Entity* root() const;
+    uint64_t uuid() const;
+    bool contains(const std :: string& tag) const;
+    sf :: Transform getTransform() const;
+    void addChild(Entity* child);
+    std :: vector<Entity*> find(const std :: string &tag);
+    virtual void update(const float& deltaTime) = 0;
+};
