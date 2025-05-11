@@ -25,7 +25,6 @@ Player :: Player() : Entity({"player"}) {
 Player :: ~Player() {
 
 }
-#include<iostream>
 void Player :: move(const float &x, const float &y, const float &deltaTime) {
     auto limit = [](float &u, float &v, const float &maxVelocity) {
         u = std :: min(u,  maxVelocity); u = std :: max(u, -maxVelocity);
