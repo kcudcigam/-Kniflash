@@ -1,9 +1,11 @@
 #pragma once
 #include "Entity.h"
 #include "Resource.h"
+#include "SignalPool.h"
 #include "DynamicEntity.h"
 #include "KnifeCircle.h"
 #include "RectEntity.h"
+#include "Timer.h"
 
 class Player : public Entity {
 private:

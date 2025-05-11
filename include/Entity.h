@@ -13,8 +13,8 @@ public:
     sf :: Transform transform;
     Entity(const std :: vector<std :: string> &tag = {});
     virtual ~Entity();
-    const Entity* super() const;
-    const Entity* root() const;
+    Entity* super();
+    Entity* root();
     uint64_t uuid() const;
     bool contains(const std :: string& tag) const;
     sf :: Transform getTransform() const;

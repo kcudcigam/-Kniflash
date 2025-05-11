@@ -1,5 +1,6 @@
 #pragma once
 #include "StaticEntity.h"
+#include "Hitbox.h"
 #include "Player.h"
 #include "Resource.h"
 

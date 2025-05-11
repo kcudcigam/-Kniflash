@@ -8,13 +8,15 @@ GameScene :: GameScene(sf :: RenderTarget* window) : Entity(), window(window) {
     addChild(background);
     auto player = new Player();
     addChild(player);
+
+    auto speedArea = new Hitbox(sf :: FloatRect(player -> transform.transformPoint(0.f, 0.f) + sf :: Vector2f(200.f, 200.f), sf :: Vector2f(100.f, 100.f)), "hitbox", "speedup");
+    addChild(speedArea);
 }
 GameScene :: ~GameScene() {
 
 }
 void GameScene :: update(const float& deltaTime) {
-    for(auto child : components)
-        child -> update(deltaTime);
+    Entity :: update(deltaTime);
     //const auto originView = window -> getView();
     window -> setView(sf :: View());
     const float &zoom = 1.f;

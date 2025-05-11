@@ -6,11 +6,12 @@
 class RectEntity : public Entity {
 private:
     sf :: FloatRect rect;
-    std :: vector<sf :: RectangleShape * > outlines;
+    sf :: RectangleShape outline;
 public:
-    RectEntity(sf :: FloatRect rect);
+    RectEntity(sf :: FloatRect rect, const std :: vector<std :: string> &tag = {});
     virtual ~RectEntity();
-    sf :: FloatRect getRect() const;
+    sf :: FloatRect getLocalRect() const;
+    sf :: FloatRect getGlobalRect() const;
     void setRect(sf :: FloatRect rect);
     void render();
     void update(const float &deltaTime);

@@ -3,10 +3,10 @@
 
 class SignalPool {
 private:
-    std :: map<int, std :: map<std :: string, int> > pool;
+    std :: map<uint64_t, std :: map<std :: string, int> > pool;
 public:
-    void add(int receiver, const std :: string &signal, int content = 0);
-    bool contains(int owner, const std :: string &signal) const;
-    void del(int owner, const std :: string &signal);
-    int query(int owner, const std :: string &signal) const;
+    void add(uint64_t receiver, const std :: string &signal, int content = 0);
+    bool contains(uint64_t owner, const std :: string &signal) const;
+    void del(uint64_t owner, const std :: string &signal);
+    int query(uint64_t owner, const std :: string &signal) const;
 };

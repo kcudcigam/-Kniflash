@@ -45,8 +45,7 @@ void KnifeCircle :: update(const float& deltaTime) {
         child -> transform.rotate(velocity * deltaTime, -getRadius(), 0.f);
         child -> transform.rotate(45.f);
     }
-    for(auto child : components)
-        child -> update(deltaTime);
+    Entity :: update(deltaTime);
     for(auto child : components) {
         child -> transform.rotate(-45.f);
     }

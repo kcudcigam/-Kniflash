@@ -24,7 +24,5 @@ void DynamicEntity :: update(const float& deltaTime)  {
         animations.at(currentAnimation).play(&sprite, deltaTime);
         renderPool.add(&sprite, getTransform(), layer, order);
     }
-    for(auto child : components) {
-        child -> update(deltaTime);
-    }
+    Entity :: update(deltaTime);
 }

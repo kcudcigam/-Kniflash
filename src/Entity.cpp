@@ -9,10 +9,10 @@ Entity :: ~Entity() {
         delete child;
     }
 }
-const Entity* Entity :: super() const {
+Entity* Entity :: super() {
     return ancestor;
 }
-const Entity* Entity :: root() const {
+Entity* Entity :: root() {
     return super() == nullptr ? this : super() -> root();
 }
 bool Entity :: contains(const std :: string &tag) const {
