@@ -17,7 +17,7 @@ Game :: Game() : height(1280), width(1920), window(sf :: VideoMode(width, height
     background.setTexture(&loadingTexture);
     window.draw(background);
     window.display();
-    
+
     resource.loadFrom("../resource");
 
     scene = new GameScene(&window);

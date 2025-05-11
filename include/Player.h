@@ -14,6 +14,8 @@ private:
     bool direction = true;
     void move(const float &x, const float &y, const float &deltaTime);
 public:
+    const sf :: Vector2f base = {6794.f, 5277.f};
+    const float radius = 4500.f;
     Player();
     virtual ~Player();
     void update(const float& deltaTime);

@@ -4,7 +4,7 @@ extern SignalPool signalPool;
 
 
 Player :: Player() : Entity({"player"}) {
-    transform.translate(3500.f, 2000.f);
+    transform.translate(base);
 
     auto character = new DynamicEntity(1, 0, {"animation"});
     character -> transform.scale(5.f, 5.f);
@@ -25,7 +25,7 @@ Player :: Player() : Entity({"player"}) {
 Player :: ~Player() {
 
 }
-
+#include<iostream>
 void Player :: move(const float &x, const float &y, const float &deltaTime) {
     auto limit = [](float &u, float &v, const float &maxVelocity) {
         u = std :: min(u,  maxVelocity); u = std :: max(u, -maxVelocity);
@@ -64,10 +64,18 @@ void Player :: update(const float& deltaTime) {
     };
     updateSpeed(velocity.x, deceleration);
     updateSpeed(velocity.y, deceleration);
+
     transform.translate(velocity * deltaTime);
 
     if(signalPool.contains(uuid(), "Inspeedup")) {
         transform.translate(velocity * (deltaTime * 5.f));
+    }
+    
+    auto distance = [](sf :: Vector2f d) {return d.x * d.x + d.y * d.y;};
+    auto offset = base - transform.transformPoint(0.f, 0.f);
+    if(distance(offset) > radius * radius) {
+        transform.translate(offset - offset / sqrtf(distance(offset)) * (radius - 2.f));
+        offset = base - transform.transformPoint(0.f, 0.f);
     }
     
     if(!direction) {

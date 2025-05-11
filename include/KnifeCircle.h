@@ -7,7 +7,7 @@ class KnifeCircle : public Entity {
 private:
     float velocity = 200.f, radius = 45.f, delta = 12.f;
 public:
-    KnifeCircle(int number = 25);
+    KnifeCircle(int number = 4);
     virtual ~KnifeCircle();
     void setNumber(int number);
     void add();
