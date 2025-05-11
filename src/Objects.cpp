@@ -6,8 +6,8 @@ Objects :: Objects(const Border* border, int layer, int order, const std :: vect
 : Entity(tag), border(border), layer(layer), order(order) {
     
 
-    const auto knifeImg = combineFrame(resource.getImg("props.png"), {9, 10}, {9, 10}, {64, 64}, {32.f, 32.f}).back();
-    const auto speedImg = combineFrame(resource.getImg("props.png"), {9, 11}, {9, 11}, {64, 64}, {32.f, 32.f}).back();
+    const auto knifeImg = combineFrame(resource.getImg("props.png"), {2, 40}, {2, 40}, {64, 64}, {32.f, 32.f}).back();
+    const auto speedImg = combineFrame(resource.getImg("props.png"), {6, 38}, {6, 38}, {64, 64}, {32.f, 32.f}).back();
     for(int i = 1; i <= knifeNumber; i++) {
         auto hitbox = new Hitbox(sf :: FloatRect({-64.f, -64.f}, {128.f, 128.f}), "player-hitbox", "knifeup");
         hitbox -> transform = sf :: Transform().translate(border -> randomPoint());

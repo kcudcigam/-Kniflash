@@ -24,6 +24,6 @@ void RectEntity :: render(){
     renderPool.add(&outline, getTransform(), 999);
 }
 void RectEntity :: update(const float &deltaTime) {
-    render();
+    //render();
     Entity :: update(deltaTime);
 }
