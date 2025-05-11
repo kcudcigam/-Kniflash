@@ -19,9 +19,8 @@ void KnifeCircle :: setNumber(int number) {
 
     for(int i = 0; i < number; i++) {
         
-        auto sprite = new sf :: Sprite(*img.texture);
-        sprite -> setTextureRect(img.rect);
-        sprite -> setOrigin(img.origin);
+        auto sprite = new sf :: Sprite;
+        img.load(sprite);
 
         auto knife = new StaticEntity(sprite, 1);
         

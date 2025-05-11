@@ -29,9 +29,7 @@ void Animation :: play(sf :: Sprite *sprite, const float &deltaTime) {
         if(loop) it = 0;
         else return;
     }
-    sprite -> setTexture(*list[it].texture);
-    sprite -> setTextureRect(list[it].rect);
-    sprite -> setOrigin(list[it].origin);
+    list[it].load(sprite);
 }
 void Animation :: reset() {
     currentTime = 0.f; it = 0;
