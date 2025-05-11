@@ -1,7 +1,9 @@
 #pragma once
 #include "StaticEntity.h"
+#include "Objects.h"
 #include "Hitbox.h"
 #include "Player.h"
+#include "Border.h"
 #include "Resource.h"
 
 

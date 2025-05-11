@@ -5,18 +5,18 @@
 #include "DynamicEntity.h"
 #include "KnifeCircle.h"
 #include "RectEntity.h"
+#include "Border.h"
 #include "Timer.h"
 
 class Player : public Entity {
 private:
+    const Border* border;
     sf :: Vector2f velocity;
     float maxVelocity = 800.f, acceleration = 3000.f, deceleration = 1500.f;
     bool direction = true;
     void move(const float &x, const float &y, const float &deltaTime);
 public:
-    const sf :: Vector2f base = {6794.f, 5277.f};
-    const float radius = 4500.f;
-    Player();
+    Player(const Border* border = nullptr, const std :: vector<std :: string> &tag = {});
     virtual ~Player();
     void update(const float& deltaTime);
 };

@@ -14,7 +14,6 @@ void Timer :: reset() {
 bool Timer :: isActive() const {
     return !(currentTime <= 0.f);
 }
-
 void Timer :: update(const float &deltaTime) {
     if(!isActive()) return;
     currentTime -= deltaTime;

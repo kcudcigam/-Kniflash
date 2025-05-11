@@ -2,20 +2,20 @@
 extern Resource resource;
 extern SignalPool signalPool;
 
-
-Player :: Player() : Entity({"player"}) {
-    transform.translate(base);
-
+Player :: Player(const Border* border, const std :: vector<std :: string> &tag) : Entity(tag), border(border) {
+    if(border) {
+        transform.translate(border -> getBase());
+    }
     auto character = new DynamicEntity(1, 0, {"animation"});
     character -> transform.scale(5.f, 5.f);
     character -> add("idle", Animation(combineFrame(resource.getImg("Character 1.png"), {0, 0}, {3, 0}, {64, 64}, {32.f, 32.f}), 0.1f));
     character -> add("walk", Animation(combineFrame(resource.getImg("Character 1.png"), {0, 2}, {5, 2}, {64, 64}, {32.f, 32.f}), 0.06f));
     addChild(character);
 
-    auto knifeCircle = new KnifeCircle();
+    auto knifeCircle = new KnifeCircle(4, {"knifeCircle"});
     addChild(knifeCircle);
 
-    auto box = new RectEntity(sf :: FloatRect(-64.f, -64.f, 128.f, 128.f), {"hitbox"});
+    auto box = new RectEntity(sf :: FloatRect(-64.f, -64.f, 128.f, 128.f), {"player-hitbox"});
     addChild(box);
 
     auto speedUp = new Timer(3.f, uuid(), "Inspeedup", 0, {"speedup"});
@@ -38,10 +38,17 @@ void Player :: move(const float &x, const float &y, const float &deltaTime) {
     if(d > 1.f) velocity /= d;  
 }
 void Player :: update(const float& deltaTime) {
-
-    if(signalPool.contains(find("hitbox").back() -> uuid(), "speedup")) {
-        signalPool.del(find("hitbox").back() -> uuid(), "speedup");
+    if(signalPool.contains(find("player-hitbox").back() -> uuid(), "speedup")) {
+        signalPool.del(find("player-hitbox").back() -> uuid(), "speedup");
         static_cast<Timer*>(find("speedup").back()) -> reset();
+    }
+    if(signalPool.contains(find("player-hitbox").back() -> uuid(), "knifeup")) {
+        signalPool.del(find("player-hitbox").back() -> uuid(), "knifeup");
+        static_cast<KnifeCircle*>(find("knifeCircle").back()) -> add();
+    }
+    if(signalPool.contains(find("player-hitbox").back() -> uuid(), "knifedown")) {
+        signalPool.del(find("player-hitbox").back() -> uuid(), "knifedown");
+        static_cast<KnifeCircle*>(find("knifeCircle").back()) -> inc();
     }
 
     if(!direction) {
@@ -65,17 +72,8 @@ void Player :: update(const float& deltaTime) {
     updateSpeed(velocity.y, deceleration);
 
     transform.translate(velocity * deltaTime);
-
-    if(signalPool.contains(uuid(), "Inspeedup")) {
-        transform.translate(velocity * (deltaTime * 5.f));
-    }
+   
     
-    auto distance = [](sf :: Vector2f d) {return d.x * d.x + d.y * d.y;};
-    auto offset = base - transform.transformPoint(0.f, 0.f);
-    if(distance(offset) > radius * radius) {
-        transform.translate(offset - offset / sqrtf(distance(offset)) * (radius - 2.f));
-        offset = base - transform.transformPoint(0.f, 0.f);
-    }
     
     if(!direction) {
         auto reverse = sf :: Transform(); reverse.scale(-1.f, 1.f);
@@ -88,6 +86,15 @@ void Player :: update(const float& deltaTime) {
         static_cast<DynamicEntity*>(find("animation").back()) -> play("idle");
     }
 
+    if(signalPool.contains(uuid(), "Inspeedup")) {
+        transform.translate(velocity * (deltaTime * 1.f));
+    }
+    
+
+    if(border) {
+        transform.translate(border -> constrains(getTransform().transformPoint(0.f, 0.f)));
+    }
+    
     for(auto child : components)
         child -> update(deltaTime);
 }
