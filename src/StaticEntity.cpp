@@ -12,7 +12,7 @@ void StaticEntity :: update(const float &deltaTime) {
     if(obj) {
         renderPool.add(obj, getTransform(), layer, order);
     }
-    for(auto child : opponents) {
+    for(auto child : components) {
         child -> update(deltaTime);
     }
 }

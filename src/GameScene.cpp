@@ -13,7 +13,7 @@ GameScene :: ~GameScene() {
 
 }
 void GameScene :: update(const float& deltaTime) {
-    for(auto child : opponents)
+    for(auto child : components)
         child -> update(deltaTime);
     //const auto originView = window -> getView();
     window -> setView(sf :: View());

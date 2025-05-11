@@ -3,6 +3,7 @@
 #include "Resource.h"
 #include "DynamicEntity.h"
 #include "KnifeCircle.h"
+#include "RectEntity.h"
 
 class Player : public Entity {
 private:

@@ -8,7 +8,7 @@ private:
     uint64_t id;
     std :: map<std :: string, bool> tags;
 protected:
-    std :: vector<Entity*> opponents;
+    std :: vector<Entity*> components;
 public:
     sf :: Transform transform;
     Entity(const std :: vector<std :: string> &tag = {});
@@ -20,5 +20,5 @@ public:
     sf :: Transform getTransform() const;
     void addChild(Entity* child);
     std :: vector<Entity*> find(const std :: string &tag);
-    virtual void update(const float& deltaTime) = 0;
+    virtual void update(const float& deltaTime);
 };

@@ -13,6 +13,9 @@ Player :: Player() : Entity({"player"}) {
 
     auto knifeCircle = new KnifeCircle();
     addChild(knifeCircle);
+
+    auto box = new RectEntity(sf :: FloatRect(-64.f, -64.f, 128.f, 128.f));
+    addChild(box);
     //
 }
 Player :: ~Player() {
@@ -66,6 +69,6 @@ void Player :: update(const float& deltaTime) {
         static_cast<DynamicEntity*>(find("animation").back()) -> play("idle");
     }
 
-    for(auto child : opponents)
+    for(auto child : components)
         child -> update(deltaTime);
 }

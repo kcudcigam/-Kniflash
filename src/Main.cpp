@@ -3,6 +3,8 @@
 std :: mt19937_64 rnd(std :: chrono :: steady_clock :: now().time_since_epoch().count());
 Resource resource;
 RenderPool renderPool;
+SignalPool signalPool;
+
 int main() {
     Game game;
     game.run();

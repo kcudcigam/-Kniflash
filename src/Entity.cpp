@@ -5,7 +5,7 @@ Entity :: Entity(const std :: vector<std :: string> &tag) : ancestor(nullptr), i
     for(const auto &i : tag) tags[i] = true;
 }
 Entity :: ~Entity() {
-    for(auto child : opponents) {
+    for(auto child : components) {
         delete child;
     }
 }
@@ -22,13 +22,13 @@ uint64_t Entity :: uuid() const {
     return id;
 }
 void Entity :: addChild(Entity* child) {
-    opponents.emplace_back(child);
+    components.emplace_back(child);
     child -> ancestor = this;
 }
 std :: vector<Entity*> Entity :: find(const std :: string &tag) {
     std :: vector<Entity*> res;
     if(contains(tag)) res.emplace_back(this);
-    for(const auto child : opponents) {
+    for(const auto child : components) {
         auto tmp = child -> find(tag);
         res.insert(res.end(), tmp.begin(), tmp.end());
     }
@@ -37,4 +37,9 @@ std :: vector<Entity*> Entity :: find(const std :: string &tag) {
 sf :: Transform Entity :: getTransform() const {
     if(ancestor == nullptr) return transform;
     return ancestor -> getTransform() * transform;
+}
+void Entity :: update(const float &deltaTime) {
+    for(auto child : components) {
+        child -> update(deltaTime);
+    }
 }
