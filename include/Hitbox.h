@@ -14,5 +14,5 @@ public:
     virtual ~Hitbox();
     void reset();
     bool isActive() const;
-    void update(const float &deltaTime);
+    virtual void update(const float &deltaTime);
 };

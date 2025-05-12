@@ -12,8 +12,14 @@ void DynamicEntity :: add(const std :: string &key, const Animation &value) {
     animations.emplace(key, value);
     animations.at(key).reset();
 }
-void DynamicEntity :: play(std :: string key) {
-    if(key == currentAnimation) return;
+void DynamicEntity :: play(std :: string key, bool priority) {
+    if(key == currentAnimation && !animations.at(currentAnimation).end()) {
+        return;
+    }
+    if(!priority && fixed && !animations.at(currentAnimation).end()) {
+        return;
+    }
+    fixed = priority;
     if(currentAnimation != "") {
         animations.at(currentAnimation).reset();
     }

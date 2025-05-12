@@ -4,7 +4,9 @@
 #include "Hitbox.h"
 #include "Player.h"
 #include "Border.h"
+#include "Bush.h"
 #include "Resource.h"
+#include "SignalPool.h"
 
 
 class GameScene : public Entity {
@@ -13,5 +15,5 @@ private:
 public:
     GameScene(sf :: RenderTarget* window);
     virtual ~GameScene();
-    void update(const float& deltaTime);
+    virtual void update(const float& deltaTime);
 };

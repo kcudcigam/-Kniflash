@@ -9,5 +9,6 @@ private:
 public:
     StaticEntity(sf :: Drawable *obj = nullptr, int layer = 0, int order = 0, const std :: vector<std :: string> &tag = {});
     virtual ~StaticEntity();
-    void update(const float& deltaTime);
+    void set(sf :: Drawable *obj);
+    virtual void update(const float& deltaTime);
 };

@@ -8,6 +8,12 @@ StaticEntity :: StaticEntity(sf :: Drawable *obj, int layer, int order, const st
 StaticEntity :: ~StaticEntity() {
     delete obj;
 }
+void StaticEntity :: set(sf :: Drawable *obj) {
+    if(this -> obj) {
+        delete this -> obj;
+    }
+    this -> obj = obj;
+}
 void StaticEntity :: update(const float &deltaTime) {
     if(obj) {
         renderPool.add(obj, getTransform(), layer, order);

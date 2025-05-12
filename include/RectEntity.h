@@ -14,5 +14,5 @@ public:
     sf :: FloatRect getGlobalRect() const;
     void setRect(sf :: FloatRect rect);
     void render();
-    void update(const float &deltaTime);
+    virtual void update(const float &deltaTime);
 };

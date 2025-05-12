@@ -1,8 +1,10 @@
 #pragma once
+#include <random>
 #include "Entity.h"
 #include "Resource.h"
 #include "SignalPool.h"
 #include "DynamicEntity.h"
+#include "HealthBar.h"
 #include "KnifeCircle.h"
 #include "RectEntity.h"
 #include "Border.h"
@@ -18,5 +20,5 @@ private:
 public:
     Player(const Border* border = nullptr, const std :: vector<std :: string> &tag = {});
     virtual ~Player();
-    void update(const float& deltaTime);
+    virtual void update(const float& deltaTime);
 };
