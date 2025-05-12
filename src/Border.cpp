@@ -30,9 +30,13 @@ float Border :: getRadius() const {
 }
 
 sf :: Vector2f Border :: randomPoint() const {
-    std :: uniform_real_distribution<float> angle(0.f, 360.f);
-    std :: uniform_real_distribution<float> distance(100.f, radius);
-    return sf :: Transform().rotate(angle(rnd)).translate(distance(rnd), 0.f).transformPoint(0.f, 0.f) + getBase();
+    std :: uniform_real_distribution<float> d(-radius, radius);
+    sf :: Vector2f point = {d(rnd), d(rnd)};
+    auto distance = [](const sf :: Vector2f &u) {return u.x * u.x + u.y * u.y;};
+    while(distance(point) > radius * radius) {
+        point = {d(rnd), d(rnd)};
+    }
+    return point + getBase();
 }
 bool Border :: check(sf :: Vector2f position) const {
     auto distance = [](sf :: Vector2f d) {return d.x * d.x + d.y * d.y;};
