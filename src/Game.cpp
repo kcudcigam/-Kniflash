@@ -2,6 +2,8 @@
 #include <iostream>
 extern Resource resource;
 extern RenderPool renderPool;
+extern SignalPool signalPool;
+
 //Game
 Game :: Game() : height(1280), width(1920), window(sf :: VideoMode(width, height), " Kniflash") {
     sf :: Image icon; icon.loadFromFile("../resource/image/icon/icon.png");
@@ -35,6 +37,17 @@ void Game :: update() {
 
     deltaTime = clock.restart().asSeconds();
     
+    if(signalPool.contains(0, "end")) {
+        delete scene;
+        signalPool.del(0, "end");
+        scene = new EndScene(&window);
+    }
+    if(signalPool.contains(0, "start")) {
+        delete scene;
+        signalPool.del(0, "start");
+        scene = new GameScene(&window);
+    }
+
     if(scene) {
         scene -> update(deltaTime);
     }

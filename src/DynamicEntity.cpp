@@ -13,17 +13,21 @@ void DynamicEntity :: add(const std :: string &key, const Animation &value) {
     animations.at(key).reset();
 }
 void DynamicEntity :: play(std :: string key, bool priority) {
-    if(key == currentAnimation && !animations.at(currentAnimation).end()) {
+    if(key == currentAnimation) {
         return;
     }
-    if(!priority && fixed && !animations.at(currentAnimation).end()) {
-        return;
-    }
-    fixed = priority;
     if(currentAnimation != "") {
+        if(!priority && fixed && !animations.at(currentAnimation).end()) {
+            return;
+        }
         animations.at(currentAnimation).reset();
     }
+    fixed = priority;
     currentAnimation = key;
+}
+const Animation* DynamicEntity :: getAnimation(const std :: string &animation) const {
+    if(!animations.contains(animation)) return nullptr;
+    return &animations.at(currentAnimation);
 }
 void DynamicEntity :: update(const float& deltaTime)  {
     if(animations.contains(currentAnimation)) {
