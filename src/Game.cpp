@@ -4,6 +4,12 @@ extern Resource resource;
 extern RenderPool renderPool;
 extern SignalPool signalPool;
 
+std::atomic<bool> atomic_bool(false);
+void loading() {
+    resource.loadFrom("../resource");
+    atomic_bool.store(true);
+}
+
 //Game
 Game :: Game() : height(1280), width(1920), window(sf :: VideoMode(width, height), " Kniflash") {
     sf :: Image icon; icon.loadFromFile("../resource/image/icon/icon.png");
@@ -12,17 +18,28 @@ Game :: Game() : height(1280), width(1920), window(sf :: VideoMode(width, height
     window.setVerticalSyncEnabled(false);
     window.clear();
 
-    sf :: RectangleShape background;
+    
     sf :: Texture loadingTexture;
     loadingTexture.loadFromFile("../resource/image/background/loading-background.png");
+    sf :: RectangleShape background;
     background.setSize({width, height});
     background.setTexture(&loadingTexture);
-    window.draw(background);
-    window.display();
 
-    resource.loadFrom("../resource");
-
-    scene = new GameScene(&window);
+    std :: thread load(loading); load.detach();
+    while(!atomic_bool && window.isOpen()) {
+        if(window.getSize() != sf :: Vector2u(width, height)) window.setSize(sf :: Vector2u(width, height));
+        
+        window.draw(background);
+        window.display();
+        
+        while(window.pollEvent(event)) {
+            if(event.type == sf :: Event :: Closed) window.close();
+        }
+    }
+    if(window.isOpen()) {
+        scene = new GameScene(&window);
+    }
+    
 }
 Game :: ~Game() {
     if(scene) delete scene;
@@ -30,10 +47,12 @@ Game :: ~Game() {
 }
 
 void Game :: update() {
+    
+    if(window.getSize() != sf :: Vector2u(width, height)) window.setSize(sf :: Vector2u(width, height));
+    
     while(window.pollEvent(event)) {
         if(event.type == sf :: Event :: Closed) window.close();
     }
-    if(window.getSize() != sf :: Vector2u(width, height)) window.setSize(sf :: Vector2u(width, height));
 
     deltaTime = clock.restart().asSeconds();
     

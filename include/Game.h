@@ -1,5 +1,6 @@
 #pragma once
 #include <random>
+#include <thread>
 #include "SFML/Graphics.hpp"
 #include "GameScene.h"
 #include "Resource.h"
