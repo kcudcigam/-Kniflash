@@ -10,15 +10,19 @@ GameScene :: GameScene(sf :: RenderTarget* window) : Entity(), window(window) {
     auto border = new Border({6794.f, 5277.f}, 4500.f, 5, 0, {"border"});
     addChild(border);
 
+    auto knifeManager = new KnifeManager({"knifeManager"});
+    addChild(knifeManager);
+
     auto player = new Player(border, {"player", "user"});
-    auto playerController = new PlayerController();
+    auto playerController = new PlayerController({"controller"});
     player -> addChild(playerController);
     addChild(player);
+    for(int i = 1; i <= 30; i++) static_cast<KnifeCircle*>(player -> find("knifeCircle").back()) -> add();
 
     for(int i = 1; i <= 40; i++) {
         auto enemy = new Player(border, {"player", "enemy"});
         enemy -> transform = sf :: Transform().translate(border -> randomPoint()); 
-        auto controller = new EnemyController();
+        auto controller = new EnemyController({"controller"});
         enemy -> addChild(controller);
         addChild(enemy);
     }
@@ -40,7 +44,7 @@ void GameScene :: update(const float& deltaTime) {
 
     Player* player = static_cast<Player*>(find("user").back());
     if(!player -> isActive()) signalPool.add(0, "end");
-    if(find("enemy").empty()) signalPool.add(0, "win");
+    //if(find("enemy").empty()) signalPool.add(0, "win");
     
     Entity :: update(deltaTime);
     if(!signalPool.contains(uuid(), "area")) {

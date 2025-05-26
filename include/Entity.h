@@ -7,6 +7,7 @@ private:
     Entity* ancestor;
     uint64_t id;
     std :: map<std :: string, bool> tags;
+    bool alive;
 protected:
     std :: vector<Entity*> components;
 public:

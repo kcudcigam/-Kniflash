@@ -9,7 +9,7 @@
 #include "SignalPool.h"
 #include "PlayerController.h"
 #include "EnemyController.h"
-
+#include "KnifeManager.h"
 
 class GameScene : public Entity {
 private:

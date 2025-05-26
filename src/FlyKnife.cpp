@@ -17,8 +17,11 @@ FlyKnife :: FlyKnife(const sf :: Vector2f &pos, const sf :: Vector2f &v, const s
 FlyKnife :: ~FlyKnife() {
 
 }
+bool FlyKnife :: isActive() const {
+    return delta < maxd;
+}
 void FlyKnife :: update(const float &deltaTime) {
-    if(delta >= maxd) return;
+    if(!isActive()) return;
     delta += deltaTime * velocity;
     transform = sf :: Transform().translate(pos);
     transform.translate(delta, 0.f);

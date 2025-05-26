@@ -13,5 +13,6 @@ private:
 public:
     FlyKnife(const sf :: Vector2f &pos, const sf :: Vector2f &v, const std :: vector<std :: string> &tag = {});
     virtual ~FlyKnife();
+    bool isActive() const;
     virtual void update(const float& deltaTime);
 };

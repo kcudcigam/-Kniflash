@@ -62,8 +62,30 @@ void Player :: move(const float &x, const float &y, const float &deltaTime) {
     if(d > 1.f) velocity /= d;  
 }
 
+uint64_t Player :: nearest() {
+    auto players = root() -> find("player");
+    std :: vector<Entity*> enemies;
+    for(auto player : players)
+        if(player -> uuid() != this -> uuid() && !static_cast<Player*>(player) -> isDead()) enemies.emplace_back(player);
+    if(enemies.empty()) return 0;
+    auto distance = [](const sf :: Vector2f &u) {return u.x * u.x + u.y * u.y;};
+    auto target = enemies.back(); enemies.pop_back();
+    for(auto enemy : enemies) {
+        const auto x = distance(enemy -> getTransform().transformPoint(0.f, 0.f) - getTransform().transformPoint(0.f, 0.f));
+        const auto y = distance(target -> getTransform().transformPoint(0.f, 0.f) - getTransform().transformPoint(0.f, 0.f));
+        if(x < y) target = enemy;
+    }
+    const float r = static_cast<KnifeCircle*>(find("knifeCircle").back()) -> getRadius() + 10.f, d = 750.f;
+    auto dis = distance(target -> getTransform().transformPoint(0.f, 0.f) - getTransform().transformPoint(0.f, 0.f));
+    if(dis > r * r && dis < d * d) return target -> uuid();
+    return 0;
+}
+
 bool Player :: isActive() const {
     return active;
+}
+bool Player :: isDead() const {
+    return dead;
 }
 void Player :: attack(const sf :: Vector2f &u) {
     auto d = u - getTransform().transformPoint(0.f, 0.f);
@@ -71,7 +93,7 @@ void Player :: attack(const sf :: Vector2f &u) {
     d /= std :: sqrt(d.x * d.x + d.y * d.y);
     auto knifeCircle = static_cast<KnifeCircle*>(find("knifeCircle").back());
     if(knifeCircle -> getNumber()) {
-        root() -> addChild(new FlyKnife(knifeCircle -> getRadius() * d + getTransform().transformPoint(0.f, 0.f), d));
+        root() -> find("knifeManager").back() -> addChild(new FlyKnife(knifeCircle -> getRadius() * d + getTransform().transformPoint(0.f, 0.f), d));
         knifeCircle -> inc();
     }
 }
@@ -80,6 +102,7 @@ void Player :: update(const float& deltaTime) {
 
     if(signalPool.contains(uuid(), "dead")) {
         static_cast<DynamicEntity*>(find("animation").back()) -> play("dead", true);
+        dead = true;
         //find("healthbar").back() -> update(deltaTime);
         find("animation").back() -> update(deltaTime);
         if(static_cast<DynamicEntity*>(find("animation").back()) -> getAnimation("dead") -> end()) {
@@ -88,6 +111,9 @@ void Player :: update(const float& deltaTime) {
         //Entity :: update(deltaTime);
         return;
     }
+
+    signalPool.add(find("controller").back() -> uuid(), "nearest", nearest());
+    
     if(signalPool.contains(find("player-hitbox").back() -> uuid(), "speedup")) {
         signalPool.del(find("player-hitbox").back() -> uuid(), "speedup");
         static_cast<Timer*>(find("speedup").back()) -> reset();
@@ -98,13 +124,14 @@ void Player :: update(const float& deltaTime) {
     }
     if(signalPool.contains(uuid(), "targeted")) {
         static_cast<StaticEntity*>(find("target").back()) -> setStatus(true);
+        signalPool.del(uuid(), "targeted");
     }
     else {
         static_cast<StaticEntity*>(find("target").back()) -> setStatus(false);
     }
 
     if(signalPool.contains(uuid(), "attack")) {
-        auto enemy = root() -> find(signalPool.query(uuid(), "attack"));
+        auto enemy = root() -> find(nearest());
         if(enemy) attack(enemy -> transform.transformPoint(0.f, 0.f));
         signalPool.del(uuid(), "attack");
     }

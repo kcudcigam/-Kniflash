@@ -5,12 +5,17 @@ extern std :: mt19937_64 rnd;
 EnemyController :: EnemyController(const std :: vector<std :: string> &tag) : Entity(tag) {
     cx[0] = rnd() & 1, cx[1] = 1 - cx[0];
     cy[0] = rnd() & 1, cy[1] = 1 - cy[0];
+    cx[0] *= (rnd() % 10 + 1), cx[1] *= (rnd() % 10 + 1);
+    cy[0] *= (rnd() % 10 + 1), cy[1] *= (rnd() % 10 + 1);
     std :: uniform_real_distribution<float> d(0.1f, 0.6f);
     interval = d(rnd);
+    auto timer = new Timer(0.5f, 0, "", 0, {"timer"});
+    addChild(timer);
 }
 EnemyController :: ~EnemyController() {
 
 }
+
 void EnemyController :: update(const float &deltaTime) {
     
     Entity :: update(deltaTime);
@@ -48,4 +53,17 @@ void EnemyController :: update(const float &deltaTime) {
         if(cx[i] > maxn) cx[i] = 1;
         if(cy[i] > maxn) cy[i] = 1;
     }
+    auto enemy = signalPool.query(uuid(), "nearest");
+    if(!enemy) {
+        target = 0; return;
+    }
+    auto timer = static_cast<Timer*>(find("timer").back());
+    if(enemy != target) timer -> reset();
+    target = enemy;
+    
+    if(!timer -> isActive()) {
+        signalPool.add(super() -> uuid(), "attack");
+        timer -> reset();
+    }
+
 }
