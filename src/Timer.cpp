@@ -9,16 +9,18 @@ Timer :: ~Timer() {
 }
 void Timer :: reset() {
     currentTime = duration;
-    signalPool.add(receiver, signal, content);
+    if(signal != "") {
+        signalPool.add(receiver, signal, content);
+    }
 }
 bool Timer :: isActive() const {
     return !(currentTime <= 0.f);
 }
 void Timer :: update(const float &deltaTime) {
     if(!isActive()) return;
+    Entity :: update(deltaTime);
     currentTime -= deltaTime;
     if(!isActive()) {
         signalPool.del(receiver, signal);
     }
-    Entity :: update(deltaTime);
 }

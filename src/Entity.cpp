@@ -34,6 +34,14 @@ std :: vector<Entity*> Entity :: find(const std :: string &tag) {
     }
     return res;
 }
+Entity* Entity :: find(uint64_t uuid) {
+    if(uuid == this -> uuid()) return this;
+    for(const auto child : components) {
+        auto tmp = child -> find(uuid);
+        if(tmp) return tmp;
+    }
+    return nullptr;
+}
 sf :: Transform Entity :: getTransform() const {
     if(ancestor == nullptr) return transform;
     return ancestor -> getTransform() * transform;

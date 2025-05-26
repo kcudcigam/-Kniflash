@@ -11,9 +11,8 @@ EndScene :: ~EndScene() {
 
 }
 void EndScene :: update(const float& deltaTime) {
+    Entity :: update(deltaTime);
     if(sf :: Keyboard :: isKeyPressed(sf :: Keyboard :: Enter)) {
         signalPool.add(0, "start");
     }
-    Entity :: update(deltaTime);
-    
 }

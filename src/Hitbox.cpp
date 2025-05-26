@@ -16,6 +16,8 @@ bool Hitbox :: isActive() const {
 }
 void Hitbox :: update(const float &deltaTime) {
     if(!active) return;
+    RectEntity :: update(deltaTime);
+    
     auto list = root() -> find(target);
     const auto rect = getGlobalRect();
     for(auto it : list) {
@@ -26,5 +28,5 @@ void Hitbox :: update(const float &deltaTime) {
             break;
         }
     }
-    RectEntity :: update(deltaTime);
+    
 }

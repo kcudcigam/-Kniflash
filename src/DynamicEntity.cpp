@@ -29,10 +29,10 @@ const Animation* DynamicEntity :: getAnimation(const std :: string &animation) c
     if(!animations.contains(animation)) return nullptr;
     return &animations.at(currentAnimation);
 }
-void DynamicEntity :: update(const float& deltaTime)  {
+void DynamicEntity :: update(const float& deltaTime) {
+    Entity :: update(deltaTime);
     if(animations.contains(currentAnimation)) {
         animations.at(currentAnimation).play(&sprite, deltaTime);
         renderPool.add(&sprite, getTransform(), layer, order);
     }
-    Entity :: update(deltaTime);
 }

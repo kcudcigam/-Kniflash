@@ -14,9 +14,14 @@ void StaticEntity :: set(sf :: Drawable *obj) {
     }
     this -> obj = obj;
 }
+void StaticEntity :: setStatus(bool status) {
+    active = status;
+}
 void StaticEntity :: update(const float &deltaTime) {
+    if(!active) return;
+    Entity :: update(deltaTime);
+    
     if(obj) {
         renderPool.add(obj, getTransform(), layer, order);
     }
-    Entity :: update(deltaTime);
 }

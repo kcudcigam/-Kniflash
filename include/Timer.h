@@ -1,7 +1,7 @@
 #pragma once
 #include "SFML/Graphics.hpp"
-#include "Entity.h"
 #include "SignalPool.h"
+#include "Entity.h"
 
 class Timer : public Entity {
 private:

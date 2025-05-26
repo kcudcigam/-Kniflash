@@ -30,8 +30,8 @@ void HealthBar :: recover() {
     static_cast<StaticEntity*>(components.back()) -> set(createImg(health));
 }
 void HealthBar :: update(const float &deltaTime) {
+    Entity :: update(deltaTime);
     if(health <= 0) {
         signalPool.add(owner, "dead");
     }
-    Entity :: update(deltaTime);
 }

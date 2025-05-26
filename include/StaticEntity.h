@@ -6,9 +6,11 @@ class StaticEntity : public Entity {
 private:
     sf :: Drawable* obj;
     int layer, order;
+    bool active = true;
 public:
     StaticEntity(sf :: Drawable *obj = nullptr, int layer = 0, int order = 0, const std :: vector<std :: string> &tag = {});
     virtual ~StaticEntity();
     void set(sf :: Drawable *obj);
+    void setStatus(bool status);
     virtual void update(const float& deltaTime);
 };

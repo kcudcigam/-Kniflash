@@ -20,5 +20,6 @@ public:
     sf :: Transform getTransform() const;
     void addChild(Entity* child);
     std :: vector<Entity*> find(const std :: string &tag);
+    Entity* find(uint64_t uuid);
     virtual void update(const float& deltaTime);
 };

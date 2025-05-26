@@ -7,6 +7,8 @@
 #include "Bush.h"
 #include "Resource.h"
 #include "SignalPool.h"
+#include "PlayerController.h"
+#include "EnemyController.h"
 
 
 class GameScene : public Entity {

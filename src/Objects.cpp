@@ -58,6 +58,7 @@ void Objects :: set(Entity* obj) const {
 }
 
 void Objects :: update(const float &deltaTime) {
+    Entity :: update(deltaTime);
     for(auto child : components) {
         auto it = static_cast<Hitbox*>(child);
         if(!it -> isActive()) {
@@ -75,5 +76,4 @@ void Objects :: update(const float &deltaTime) {
             }
         }
     }
-    Entity :: update(deltaTime);
 }

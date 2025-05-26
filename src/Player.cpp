@@ -7,6 +7,7 @@ Player :: Player(const Border* border, const std :: vector<std :: string> &tag) 
     if(border) {
         transform.translate(border -> getBase());
     }
+
     auto character = new DynamicEntity(1, 0, {"animation"});
     character -> transform.scale(5.f, 5.f);
     const std :: string &img = "Character " + std :: to_string(rnd() % 18 + 1) + ".png";
@@ -15,6 +16,15 @@ Player :: Player(const Border* border, const std :: vector<std :: string> &tag) 
     character -> add("hurt", Animation(combineFrame(resource.getImg(img), {0, 5}, {3, 5}, {64, 64}, {32.f, 32.f}), 0.05f, false));
     character -> add("dead", Animation(combineFrame(resource.getImg(img), {0, 6}, {9, 6}, {64, 64}, {32.f, 32.f}), 0.1f, false));
     addChild(character);
+
+    auto targetCircle = new sf :: Sprite(*resource.getImg("circle.png"));
+    targetCircle -> setOrigin(100.f, 100.f);
+    auto target = new StaticEntity(targetCircle, 1, 1, {"target"});
+    target -> transform.scale(0.75f, 0.75f);
+    target -> transform.translate(0.f, 10.f);
+    target -> addChild(new Rotater(360.f));
+    target -> setStatus(false);
+    addChild(target);
 
     auto healthBar = new HealthBar(uuid(), 3, 0, {"healthbar"});
     healthBar -> transform.translate(-5.f, -110.f).scale(4.f, 5.f);
@@ -51,13 +61,29 @@ void Player :: move(const float &x, const float &y, const float &deltaTime) {
     const float &d = std :: sqrt(velocity.x * velocity.x + velocity.y * velocity.y) / maxVelocity;
     if(d > 1.f) velocity /= d;  
 }
+
+bool Player :: isActive() const {
+    return active;
+}
+void Player :: attack(const sf :: Vector2f &u) {
+    auto d = u - getTransform().transformPoint(0.f, 0.f);
+    if(d.x * d.x + d.y * d.y == 0.f) return;
+    d /= std :: sqrt(d.x * d.x + d.y * d.y);
+    auto knifeCircle = static_cast<KnifeCircle*>(find("knifeCircle").back());
+    if(knifeCircle -> getNumber()) {
+        root() -> addChild(new FlyKnife(knifeCircle -> getRadius() * d + getTransform().transformPoint(0.f, 0.f), d));
+        knifeCircle -> inc();
+    }
+}
+
 void Player :: update(const float& deltaTime) {
+
     if(signalPool.contains(uuid(), "dead")) {
         static_cast<DynamicEntity*>(find("animation").back()) -> play("dead", true);
         //find("healthbar").back() -> update(deltaTime);
         find("animation").back() -> update(deltaTime);
         if(static_cast<DynamicEntity*>(find("animation").back()) -> getAnimation("dead") -> end()) {
-            signalPool.add(0, "end");
+            active = false;
         }
         //Entity :: update(deltaTime);
         return;
@@ -70,6 +96,19 @@ void Player :: update(const float& deltaTime) {
     if(!signalPool.contains(uuid(), "Inspeedup")) {
         static_cast<DynamicEntity*>(find("speedCircle").back()) -> play("");
     }
+    if(signalPool.contains(uuid(), "targeted")) {
+        static_cast<StaticEntity*>(find("target").back()) -> setStatus(true);
+    }
+    else {
+        static_cast<StaticEntity*>(find("target").back()) -> setStatus(false);
+    }
+
+    if(signalPool.contains(uuid(), "attack")) {
+        auto enemy = root() -> find(signalPool.query(uuid(), "attack"));
+        if(enemy) attack(enemy -> transform.transformPoint(0.f, 0.f));
+        signalPool.del(uuid(), "attack");
+    }
+    
     if(signalPool.contains(find("player-hitbox").back() -> uuid(), "knifeup")) {
         signalPool.del(find("player-hitbox").back() -> uuid(), "knifeup");
         static_cast<KnifeCircle*>(find("knifeCircle").back()) -> add();
@@ -89,30 +128,46 @@ void Player :: update(const float& deltaTime) {
         static_cast<DynamicEntity*>(find("animation").back()) -> play("hurt", true);
     }
 
+    if(signalPool.contains(uuid(), "hurt")) {
+        signalPool.del(uuid(), "hurt");
+        if(static_cast<KnifeCircle*>(find("knifeCircle").back()) -> getNumber()) {
+            static_cast<KnifeCircle*>(find("knifeCircle").back()) -> inc();
+        }
+        else {
+            static_cast<HealthBar*>(find("healthbar").back()) -> inc();
+        }
+        static_cast<DynamicEntity*>(find("animation").back()) -> play("hurt", true);
+    }
+    
     if(!direction) {
         auto reverse = sf :: Transform(); reverse.scale(-1.f, 1.f);
         find("animation").back() -> transform.combine(reverse);
     }
-    if(sf :: Keyboard :: isKeyPressed(sf :: Keyboard :: A) || sf :: Keyboard :: isKeyPressed(sf :: Keyboard :: Left))
-        move(-1.f,  0.f, deltaTime);
-    if(sf :: Keyboard :: isKeyPressed(sf :: Keyboard :: D) || sf :: Keyboard :: isKeyPressed(sf :: Keyboard :: Right))
-       move(1.f,  0.f, deltaTime);
-    if(sf :: Keyboard :: isKeyPressed(sf :: Keyboard :: W) || sf :: Keyboard :: isKeyPressed(sf :: Keyboard :: Up))
-        move(0.f, -1.f, deltaTime);
-    if(sf :: Keyboard :: isKeyPressed(sf :: Keyboard :: S) || sf :: Keyboard :: isKeyPressed(sf :: Keyboard :: Down))
-        move(0.f,  1.f, deltaTime);
-
+    float vx = 0.f, vy = 0.f;
+    if(signalPool.contains(uuid(), "Moveup")) {
+        vy -= 1.f; signalPool.del(uuid(), "Moveup");
+    }
+    if(signalPool.contains(uuid(), "Movedown")) {
+        vy += 1.f; signalPool.del(uuid(), "Movedown");
+    }
+    if(signalPool.contains(uuid(), "Moveleft")) {
+        vx -= 1.f; signalPool.del(uuid(), "Moveleft");
+    }
+    if(signalPool.contains(uuid(), "Moveright")) {
+        vx += 1.f; signalPool.del(uuid(), "Moveright");
+    }
+    if(vx != 0.f || vy != 0.f) {
+        const float v = sqrtf(vx * vx + vy * vy);
+        move(vx / v, vy / v, deltaTime);
+    }
     auto updateSpeed = [&deltaTime](float &x, const float &deceleration) {
         const int u = (x > 0.f ? 1 : x < 0.f ? -1 : 0); x *= u;
         x -= deltaTime * deceleration; x = std :: max(x, 0.f) * u;
     };
     updateSpeed(velocity.x, deceleration);
     updateSpeed(velocity.y, deceleration);
-
     transform.translate(velocity * deltaTime);
    
-    
-    
     if(!direction) {
         auto reverse = sf :: Transform(); reverse.scale(-1.f, 1.f);
         find("animation").back() -> transform.combine(reverse);
@@ -124,6 +179,7 @@ void Player :: update(const float& deltaTime) {
         static_cast<DynamicEntity*>(find("animation").back()) -> play("idle");
     }
 
+
     if(signalPool.contains(uuid(), "Inspeedup")) {
         transform.translate(velocity * (deltaTime * 1.f));
     }
@@ -132,7 +188,5 @@ void Player :: update(const float& deltaTime) {
     if(border) {
         transform.translate(border -> constrains(getTransform().transformPoint(0.f, 0.f)));
     }
-    
-    for(auto child : components)
-        child -> update(deltaTime);
+    Entity :: update(deltaTime);
 }

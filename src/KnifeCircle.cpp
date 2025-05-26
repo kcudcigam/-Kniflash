@@ -29,6 +29,7 @@ void KnifeCircle :: setNumber(int number) {
         
         knife -> transform = position;
         position.rotate(360.f / number, - radius - number * delta, 0.f);
+        
         addChild(knife);
     }
 }
@@ -53,7 +54,7 @@ float KnifeCircle :: getRadius() const {
 void KnifeCircle :: update(const float& deltaTime) {
     
     if(getNumber() < 4 && !signalPool.contains(uuid(), "loading")) add();
-
+    
     for(auto child : components) {
         child -> transform.rotate(velocity * deltaTime, -getRadius(), 0.f);
         child -> transform.rotate(45.f);
