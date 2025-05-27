@@ -10,6 +10,7 @@
 #include "PlayerController.h"
 #include "EnemyController.h"
 #include "KnifeManager.h"
+#include "EndScene.h"
 
 class GameScene : public Entity {
 private:

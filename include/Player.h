@@ -30,6 +30,7 @@ private:
 public:
     Player(const Border* border = nullptr, const std :: vector<std :: string> &tag = {}, bool interactive = true);
     virtual ~Player();
+    void hide();
     bool isActive() const;
     bool isDead() const;
     int getSkin() const;

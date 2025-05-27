@@ -53,12 +53,18 @@ void GameScene :: update(const float& deltaTime) {
     clock += deltaTime;
     Entity :: update(deltaTime);
     Player* player = static_cast<Player*>(find("user").back());
-    if(!player -> isActive()) signalPool.add(0, "end");
     auto enemies = find("enemy"); int cnt = 0;
     for(auto enemy : enemies) {
         if(static_cast<Player*>(enemy) -> isActive()) cnt++;
     }
-    if(!cnt) signalPool.add(0, "end");
+    if((!player -> isActive() || !cnt) && !signalPool.contains(uuid(), "end")) {
+        signalPool.add(uuid(), "end");
+        player -> hide();
+        const auto tmp = data();
+        auto end = new EndScene(window, std :: get<0>(tmp), std :: get<1>(tmp), std :: get<2>(tmp), std :: get<3>(tmp));
+        end -> transform = sf :: Transform().translate(player -> transform.transformPoint(0.f, 0.f));
+        addChild(end);
+    }
     //std :: cerr << static_cast<Statistics*>(find("statistics").back()) -> query(find("user").back() -> uuid()) << std :: endl;
     /*
     if(!signalPool.contains(uuid(), "area")) {

@@ -69,12 +69,6 @@ void Game :: update() {
         signalPool.del(0, "game");
         scene = new GameScene(&window);
     }
-    if(signalPool.contains(0, "end")) {
-        auto data = static_cast<GameScene*>(scene) -> data();
-        delete scene;
-        signalPool.del(0, "end");
-        scene = new EndScene(&window, std :: get<0>(data), std :: get<1>(data), std :: get<2>(data), std :: get<3>(data));
-    }
 
     if(scene) {
         scene -> update(deltaTime);

@@ -120,6 +120,9 @@ void Player :: combat() {
         }
     }
 }
+void Player :: hide() {
+    active = false;
+}
 void Player :: hurt() {
     if(static_cast<KnifeCircle*>(find("knifeCircle").back()) -> getNumber()) {
         static_cast<KnifeCircle*>(find("knifeCircle").back()) -> inc();
@@ -131,6 +134,8 @@ void Player :: hurt() {
 }
 
 void Player :: update(const float& deltaTime) {
+    
+    if(!isActive()) return;
 
     if(interactive) {
         if(signalPool.contains(uuid(), "dead")) {
