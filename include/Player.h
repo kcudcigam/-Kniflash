@@ -20,6 +20,8 @@ private:
     float maxVelocity = 800.f, acceleration = 3000.f, deceleration = 1500.f;
     bool direction = true, active = true, dead = false;
     void attack(const sf :: Vector2f &u);
+    void combat();
+    void hurt();
     void move(const float &x, const float &y, const float &deltaTime);
     uint64_t nearest();
 public:

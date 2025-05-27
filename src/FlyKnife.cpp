@@ -15,7 +15,7 @@ FlyKnife :: FlyKnife(const sf :: Vector2f &pos, const sf :: Vector2f &v, const s
     transform.rotate(atan2f(v.y, v.x) * 180.f / acosf(-1.f), -delta, 0.f);
 }
 FlyKnife :: ~FlyKnife() {
-
+    
 }
 bool FlyKnife :: isActive() const {
     return delta < maxd;

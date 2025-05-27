@@ -44,6 +44,9 @@ Player :: Player(const Border* border, const std :: vector<std :: string> &tag) 
     circle -> transform.translate(0.f, 40.f);
     circle -> transform.scale(2.5f, 2.5f);
     addChild(circle);
+
+    auto hurtTimer = new Timer(0.2f, 0, "", 0, {"hurtTimer"});
+    addChild(hurtTimer);
     //
 }
 Player :: ~Player() {
@@ -97,6 +100,29 @@ void Player :: attack(const sf :: Vector2f &u) {
         knifeCircle -> inc();
     }
 }
+void Player :: combat() {
+    auto players = root() -> find("player");
+    std :: vector<Entity*> enemies;
+    for(auto player : players)
+        if(player -> uuid() != this -> uuid() && !static_cast<Player*>(player) -> isDead()) enemies.emplace_back(player);
+    auto distance = [](const sf :: Vector2f &u) {return u.x * u.x + u.y * u.y;};
+    const float r = static_cast<KnifeCircle*>(find("knifeCircle").back()) -> getRadius() + 10.f;
+    for(auto enemy : enemies) {
+        const auto x = distance(enemy -> getTransform().transformPoint(0.f, 0.f) - getTransform().transformPoint(0.f, 0.f));
+        if(x < r * r) {
+            signalPool.add(enemy -> uuid(), "combat", uuid());
+        }
+    }
+}
+void Player :: hurt() {
+    if(static_cast<KnifeCircle*>(find("knifeCircle").back()) -> getNumber()) {
+        static_cast<KnifeCircle*>(find("knifeCircle").back()) -> inc();
+    }
+    else {
+        static_cast<HealthBar*>(find("healthbar").back()) -> inc();
+    }
+    static_cast<DynamicEntity*>(find("animation").back()) -> play("hurt", true);
+}
 
 void Player :: update(const float& deltaTime) {
 
@@ -113,6 +139,7 @@ void Player :: update(const float& deltaTime) {
     }
 
     signalPool.add(find("controller").back() -> uuid(), "nearest", nearest());
+    combat();
     
     if(signalPool.contains(find("player-hitbox").back() -> uuid(), "speedup")) {
         signalPool.del(find("player-hitbox").back() -> uuid(), "speedup");
@@ -135,6 +162,15 @@ void Player :: update(const float& deltaTime) {
         if(enemy) attack(enemy -> transform.transformPoint(0.f, 0.f));
         signalPool.del(uuid(), "attack");
     }
+    if(signalPool.contains(uuid(), "combat")) {
+        auto timer = static_cast<Timer*>(find("hurtTimer").back());
+        if(!timer -> isActive()) {
+            hurt();
+            signalPool.add(signalPool.query(uuid(), "combat"), "hurt");
+            timer -> reset();
+        }
+        signalPool.del(uuid(), "combat");
+    }
     
     if(signalPool.contains(find("player-hitbox").back() -> uuid(), "knifeup")) {
         signalPool.del(find("player-hitbox").back() -> uuid(), "knifeup");
@@ -146,13 +182,7 @@ void Player :: update(const float& deltaTime) {
     }
     if(signalPool.contains(find("player-hitbox").back() -> uuid(), "hurt")) {
         signalPool.del(find("player-hitbox").back() -> uuid(), "hurt");
-        if(static_cast<KnifeCircle*>(find("knifeCircle").back()) -> getNumber()) {
-            static_cast<KnifeCircle*>(find("knifeCircle").back()) -> inc();
-        }
-        else {
-            static_cast<HealthBar*>(find("healthbar").back()) -> inc();
-        }
-        static_cast<DynamicEntity*>(find("animation").back()) -> play("hurt", true);
+        hurt();
     }
 
     if(signalPool.contains(uuid(), "hurt")) {

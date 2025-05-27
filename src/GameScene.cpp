@@ -41,7 +41,6 @@ GameScene :: ~GameScene() {
 
 }
 void GameScene :: update(const float& deltaTime) {
-
     Player* player = static_cast<Player*>(find("user").back());
     if(!player -> isActive()) signalPool.add(0, "end");
     //if(find("enemy").empty()) signalPool.add(0, "win");
@@ -58,5 +57,4 @@ void GameScene :: update(const float& deltaTime) {
     sf :: Vector2f center = {std :: floor(position.x + 0.5f), std :: floor(position.y + 0.5f)};
     const sf :: Vector2f &size = {static_cast<float>(window -> getSize().x), static_cast<float>(window -> getSize().y)};
     auto view = sf :: View(center, size); view.zoom(zoom); window -> setView(view);
-    
 }

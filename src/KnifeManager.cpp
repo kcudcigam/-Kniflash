@@ -7,11 +7,14 @@ KnifeManager :: ~KnifeManager() {
 
 }
 void KnifeManager :: update(const float& deltaTime) {
-    Entity :: update(deltaTime);
     std :: vector<Entity*> knives;
     for(auto knife : components) {
         if(static_cast<FlyKnife*>(knife) -> isActive())
             knives.emplace_back(knife);
+        else {
+            delete knife;
+        }
     }
     swap(components, knives);
+    Entity :: update(deltaTime);
 }
