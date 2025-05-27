@@ -7,6 +7,7 @@
 #include "RenderPool.h"
 #include "SignalPool.h"
 #include "EndScene.h"
+#include "StartScene.h"
 
 class Game {
 private:

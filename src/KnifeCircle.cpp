@@ -49,7 +49,7 @@ void KnifeCircle :: inc() {
     }
 }
 float KnifeCircle :: getRadius() const {
-    return radius + getNumber() * delta;
+    return getNumber() ? radius + getNumber() * delta : 0.f;
 }
 void KnifeCircle :: update(const float& deltaTime) {
     

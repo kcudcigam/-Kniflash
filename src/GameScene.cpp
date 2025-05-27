@@ -17,39 +17,54 @@ GameScene :: GameScene(sf :: RenderTarget* window) : Entity(), window(window) {
     auto playerController = new PlayerController({"controller"});
     player -> addChild(playerController);
     addChild(player);
-    for(int i = 1; i <= 30; i++) static_cast<KnifeCircle*>(player -> find("knifeCircle").back()) -> add();
+    //for(int i = 1; i <= 30; i++) static_cast<KnifeCircle*>(player -> find("knifeCircle").back()) -> add();
 
-    for(int i = 1; i <= 40; i++) {
+    for(int i = 1; i <= enemyCount; i++) {
         auto enemy = new Player(border, {"player", "enemy"});
         enemy -> transform = sf :: Transform().translate(border -> randomPoint()); 
         auto controller = new EnemyController({"controller"});
         enemy -> addChild(controller);
         addChild(enemy);
     }
-    auto area = new Hitbox(sf :: FloatRect(player -> transform.transformPoint(0.f, 0.f) + sf :: Vector2f(200.f, 200.f), sf :: Vector2f(100.f, 100.f)), "player-hitbox", "hurt", 0, {"debug"});
-    auto area_timer = new Timer(0.8f, uuid(), "area", 0, {"debug_timer"});
-    addChild(area_timer);
-    addChild(area);
-
+    //auto area = new Hitbox(sf :: FloatRect(player -> transform.transformPoint(0.f, 0.f) + sf :: Vector2f(200.f, 200.f), sf :: Vector2f(100.f, 100.f)), "player-hitbox", "hurt", 0, {"debug"});
+    //auto area_timer = new Timer(0.8f, uuid(), "area", 0, {"debug_timer"});
+    //addChild(area_timer);
+    //addChild(area);
     auto objects = new Objects(border, 1, 0, {});
     addChild(objects);
 
     auto bush = new Bush(border, 10, 2);
     addChild(bush);
+
+    auto statistics = new Statistics({"statistics"});
+    addChild(statistics);
 }
 GameScene :: ~GameScene() {
 
 }
+std :: tuple<int, float, std :: pair<int, int>, int> GameScene :: data() {
+    auto enemies = find("enemy"); int cnt = 0;
+    for(auto enemy : enemies) {
+        if(static_cast<Player*>(enemy) -> isActive()) cnt++;
+    }
+    return {static_cast<Player*>(find("user").back()) -> getSkin(), clock, std :: make_pair(enemyCount - cnt + 1, enemyCount), static_cast<Statistics*>(find("statistics").back()) -> query(find("user").back() -> uuid())};
+}
 void GameScene :: update(const float& deltaTime) {
+    clock += deltaTime;
+    Entity :: update(deltaTime);
     Player* player = static_cast<Player*>(find("user").back());
     if(!player -> isActive()) signalPool.add(0, "end");
-    //if(find("enemy").empty()) signalPool.add(0, "win");
-    
-    Entity :: update(deltaTime);
+    auto enemies = find("enemy"); int cnt = 0;
+    for(auto enemy : enemies) {
+        if(static_cast<Player*>(enemy) -> isActive()) cnt++;
+    }
+    if(!cnt) signalPool.add(0, "end");
+    //std :: cerr << static_cast<Statistics*>(find("statistics").back()) -> query(find("user").back() -> uuid()) << std :: endl;
+    /*
     if(!signalPool.contains(uuid(), "area")) {
         static_cast<Timer*>(find("debug_timer").back()) -> reset();
         static_cast<Hitbox*>(find("debug").back()) -> reset();
-    }   
+    }   */
     //const auto originView = window -> getView();
     //window -> setView(sf :: View());
     const float &zoom = 1.f;

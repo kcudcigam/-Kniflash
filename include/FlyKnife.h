@@ -7,11 +7,13 @@
 
 class FlyKnife : public Entity {
 private:
+    uint64_t owner;
     sf :: Vector2f pos, v;
     const float velocity = 4500.f, maxd = 1000.f;
     float delta = 0.f;
+
 public:
-    FlyKnife(const sf :: Vector2f &pos, const sf :: Vector2f &v, const std :: vector<std :: string> &tag = {});
+    FlyKnife(uint64_t owner, const sf :: Vector2f &pos, const sf :: Vector2f &v, const std :: vector<std :: string> &tag = {});
     virtual ~FlyKnife();
     bool isActive() const;
     virtual void update(const float& deltaTime);

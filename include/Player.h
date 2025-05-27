@@ -12,6 +12,7 @@
 #include "Timer.h"
 #include "Rotater.h"
 #include "FlyKnife.h"
+#include "Statistics.h"
 
 class Player : public Entity {
 private:
@@ -19,15 +20,18 @@ private:
     sf :: Vector2f velocity;
     float maxVelocity = 800.f, acceleration = 3000.f, deceleration = 1500.f;
     bool direction = true, active = true, dead = false;
+    uint64_t attacker = 0; int skin = 0;
+    bool interactive;
     void attack(const sf :: Vector2f &u);
     void combat();
     void hurt();
     void move(const float &x, const float &y, const float &deltaTime);
     uint64_t nearest();
 public:
-    Player(const Border* border = nullptr, const std :: vector<std :: string> &tag = {});
+    Player(const Border* border = nullptr, const std :: vector<std :: string> &tag = {}, bool interactive = true);
     virtual ~Player();
     bool isActive() const;
     bool isDead() const;
+    int getSkin() const;
     virtual void update(const float& deltaTime);
 };

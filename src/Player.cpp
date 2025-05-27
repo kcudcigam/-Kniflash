@@ -3,14 +3,15 @@ extern Resource resource;
 extern SignalPool signalPool;
 extern std :: mt19937_64 rnd;
 #include <iostream>
-Player :: Player(const Border* border, const std :: vector<std :: string> &tag) : Entity(tag), border(border) {
+Player :: Player(const Border* border, const std :: vector<std :: string> &tag, bool interactive) : Entity(tag), border(border), interactive(interactive) {
     if(border) {
         transform.translate(border -> getBase());
     }
 
     auto character = new DynamicEntity(1, 0, {"animation"});
     character -> transform.scale(5.f, 5.f);
-    const std :: string &img = "Character " + std :: to_string(rnd() % 18 + 1) + ".png";
+    skin = rnd() % 18 + 1;
+    const std :: string &img = "Character " + std :: to_string(skin) + ".png";
     character -> add("idle", Animation(combineFrame(resource.getImg(img), {0, 0}, {3, 0}, {64, 64}, {32.f, 32.f}), 0.1f));
     character -> add("walk", Animation(combineFrame(resource.getImg(img), {0, 2}, {5, 2}, {64, 64}, {32.f, 32.f}), 0.06f));
     character -> add("hurt", Animation(combineFrame(resource.getImg(img), {0, 5}, {3, 5}, {64, 64}, {32.f, 32.f}), 0.05f, false));
@@ -26,9 +27,11 @@ Player :: Player(const Border* border, const std :: vector<std :: string> &tag) 
     target -> setStatus(false);
     addChild(target);
 
-    auto healthBar = new HealthBar(uuid(), 3, 0, {"healthbar"});
-    healthBar -> transform.translate(-5.f, -110.f).scale(4.f, 5.f);
-    addChild(healthBar);
+    if(interactive) {
+        auto healthBar = new HealthBar(uuid(), 3, 0, {"healthbar"});
+        healthBar -> transform.translate(-5.f, -110.f).scale(4.f, 5.f);
+        addChild(healthBar);
+    }
 
     auto knifeCircle = new KnifeCircle(4, {"knifeCircle"});
     addChild(knifeCircle);
@@ -51,6 +54,9 @@ Player :: Player(const Border* border, const std :: vector<std :: string> &tag) 
 }
 Player :: ~Player() {
 
+}
+int Player :: getSkin() const {
+    return skin;
 }
 void Player :: move(const float &x, const float &y, const float &deltaTime) {
     auto limit = [](float &u, float &v, const float &maxVelocity) {
@@ -96,7 +102,7 @@ void Player :: attack(const sf :: Vector2f &u) {
     d /= std :: sqrt(d.x * d.x + d.y * d.y);
     auto knifeCircle = static_cast<KnifeCircle*>(find("knifeCircle").back());
     if(knifeCircle -> getNumber()) {
-        root() -> find("knifeManager").back() -> addChild(new FlyKnife(knifeCircle -> getRadius() * d + getTransform().transformPoint(0.f, 0.f), d));
+        root() -> find("knifeManager").back() -> addChild(new FlyKnife(uuid(), knifeCircle -> getRadius() * d + getTransform().transformPoint(0.f, 0.f), d));
         knifeCircle -> inc();
     }
 }
@@ -126,74 +132,71 @@ void Player :: hurt() {
 
 void Player :: update(const float& deltaTime) {
 
-    if(signalPool.contains(uuid(), "dead")) {
-        static_cast<DynamicEntity*>(find("animation").back()) -> play("dead", true);
-        dead = true;
-        //find("healthbar").back() -> update(deltaTime);
-        find("animation").back() -> update(deltaTime);
-        if(static_cast<DynamicEntity*>(find("animation").back()) -> getAnimation("dead") -> end()) {
-            active = false;
+    if(interactive) {
+        if(signalPool.contains(uuid(), "dead")) {
+            if(!signalPool.contains(uuid(), "kill")) {
+                signalPool.add(uuid(), "kill");
+                static_cast<Statistics*>(root() -> find("statistics").back()) -> add(attacker);
+            }
+            static_cast<DynamicEntity*>(find("animation").back()) -> play("dead", true);
+            dead = true;
+            //find("healthbar").back() -> update(deltaTime);
+            find("animation").back() -> update(deltaTime);
+            if(static_cast<DynamicEntity*>(find("animation").back()) -> getAnimation("dead") -> end()) {
+                active = false;
+            }
+            //Entity :: update(deltaTime);
+            return;
         }
-        //Entity :: update(deltaTime);
-        return;
+
+        combat();
+
+        if(signalPool.contains(find("player-hitbox").back() -> uuid(), "speedup")) {
+            signalPool.del(find("player-hitbox").back() -> uuid(), "speedup");
+            static_cast<Timer*>(find("speedup").back()) -> reset();
+            static_cast<DynamicEntity*>(find("speedCircle").back()) -> play("animation");
+        }
+        if(!signalPool.contains(uuid(), "Inspeedup")) {
+            static_cast<DynamicEntity*>(find("speedCircle").back()) -> play("");
+        }
+        if(signalPool.contains(uuid(), "targeted")) {
+            static_cast<StaticEntity*>(find("target").back()) -> setStatus(true);
+            signalPool.del(uuid(), "targeted");
+        }
+        else {
+            static_cast<StaticEntity*>(find("target").back()) -> setStatus(false);
+        }
+        
+        if(signalPool.contains(uuid(), "hurt")) {
+            hurt(); attacker = signalPool.query(uuid(), "hurt");
+            signalPool.del(uuid(), "hurt");
+        }
+
+        if(signalPool.contains(uuid(), "combat")) {
+            auto timer = static_cast<Timer*>(find("hurtTimer").back());
+            if(!timer -> isActive()) {
+                hurt(); attacker = signalPool.query(uuid(), "combat");
+                signalPool.add(attacker, "hurt", uuid());
+                timer -> reset();
+            }
+            signalPool.del(uuid(), "combat");
+        }
+        
+        if(signalPool.contains(find("player-hitbox").back() -> uuid(), "knifeup")) {
+            signalPool.del(find("player-hitbox").back() -> uuid(), "knifeup");
+            static_cast<KnifeCircle*>(find("knifeCircle").back()) -> add();
+        }
+        if(signalPool.contains(find("player-hitbox").back() -> uuid(), "healthup")) {
+            signalPool.del(find("player-hitbox").back() -> uuid(), "healthup");
+            static_cast<HealthBar*>(find("healthbar").back()) -> recover();
+        }
     }
 
     signalPool.add(find("controller").back() -> uuid(), "nearest", nearest());
-    combat();
-    
-    if(signalPool.contains(find("player-hitbox").back() -> uuid(), "speedup")) {
-        signalPool.del(find("player-hitbox").back() -> uuid(), "speedup");
-        static_cast<Timer*>(find("speedup").back()) -> reset();
-        static_cast<DynamicEntity*>(find("speedCircle").back()) -> play("animation");
-    }
-    if(!signalPool.contains(uuid(), "Inspeedup")) {
-        static_cast<DynamicEntity*>(find("speedCircle").back()) -> play("");
-    }
-    if(signalPool.contains(uuid(), "targeted")) {
-        static_cast<StaticEntity*>(find("target").back()) -> setStatus(true);
-        signalPool.del(uuid(), "targeted");
-    }
-    else {
-        static_cast<StaticEntity*>(find("target").back()) -> setStatus(false);
-    }
-
     if(signalPool.contains(uuid(), "attack")) {
         auto enemy = root() -> find(nearest());
         if(enemy) attack(enemy -> transform.transformPoint(0.f, 0.f));
         signalPool.del(uuid(), "attack");
-    }
-    if(signalPool.contains(uuid(), "combat")) {
-        auto timer = static_cast<Timer*>(find("hurtTimer").back());
-        if(!timer -> isActive()) {
-            hurt();
-            signalPool.add(signalPool.query(uuid(), "combat"), "hurt");
-            timer -> reset();
-        }
-        signalPool.del(uuid(), "combat");
-    }
-    
-    if(signalPool.contains(find("player-hitbox").back() -> uuid(), "knifeup")) {
-        signalPool.del(find("player-hitbox").back() -> uuid(), "knifeup");
-        static_cast<KnifeCircle*>(find("knifeCircle").back()) -> add();
-    }
-    if(signalPool.contains(find("player-hitbox").back() -> uuid(), "healthup")) {
-        signalPool.del(find("player-hitbox").back() -> uuid(), "healthup");
-        static_cast<HealthBar*>(find("healthbar").back()) -> recover();
-    }
-    if(signalPool.contains(find("player-hitbox").back() -> uuid(), "hurt")) {
-        signalPool.del(find("player-hitbox").back() -> uuid(), "hurt");
-        hurt();
-    }
-
-    if(signalPool.contains(uuid(), "hurt")) {
-        signalPool.del(uuid(), "hurt");
-        if(static_cast<KnifeCircle*>(find("knifeCircle").back()) -> getNumber()) {
-            static_cast<KnifeCircle*>(find("knifeCircle").back()) -> inc();
-        }
-        else {
-            static_cast<HealthBar*>(find("healthbar").back()) -> inc();
-        }
-        static_cast<DynamicEntity*>(find("animation").back()) -> play("hurt", true);
     }
     
     if(!direction) {
@@ -240,7 +243,6 @@ void Player :: update(const float& deltaTime) {
     if(signalPool.contains(uuid(), "Inspeedup")) {
         transform.translate(velocity * (deltaTime * 1.f));
     }
-    
 
     if(border) {
         transform.translate(border -> constrains(getTransform().transformPoint(0.f, 0.f)));

@@ -2,7 +2,8 @@
 extern Resource resource;
 extern SignalPool signalPool;
 
-FlyKnife :: FlyKnife(const sf :: Vector2f &pos, const sf :: Vector2f &v, const std :: vector<std :: string> &tag) : Entity(tag), pos(pos), v(v) {
+FlyKnife :: FlyKnife(uint64_t owner, const sf :: Vector2f &pos, const sf :: Vector2f &v, const std :: vector<std :: string> &tag)
+ : owner(owner), Entity(tag), pos(pos), v(v) {
     
     auto sprite = new sf :: Sprite();
     combineFrame(resource.getImg("props.png"), {10, 9}, {10, 9}, {64, 64}, {0.f, 64.f}).back().load(sprite);
@@ -32,7 +33,7 @@ void FlyKnife :: update(const float &deltaTime) {
     for(auto player : players) {
         auto dis = distance(player -> getTransform().transformPoint(0.f, 0.f) - getTransform().transformPoint(0.f, 0.f));
         if(dis < range * range) {
-            signalPool.add(player -> uuid(), "hurt");
+            signalPool.add(player -> uuid(), "hurt", owner);
             delta = maxd; break;
         }
     }

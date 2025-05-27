@@ -37,7 +37,7 @@ Game :: Game() : height(1280), width(1920), window(sf :: VideoMode(width, height
         }
     }
     if(window.isOpen()) {
-        scene = new GameScene(&window);
+        scene = new StartScene(&window);
     }
     
 }
@@ -54,16 +54,26 @@ void Game :: update() {
         if(event.type == sf :: Event :: Closed) window.close();
     }
     deltaTime = clock.restart().asSeconds();
-    
-    if(signalPool.contains(0, "end")) {
-        delete scene;
-        signalPool.del(0, "end");
-        scene = new EndScene(&window);
+    if(signalPool.contains(0, "exit")) {
+        signalPool.del(0, "exit");
+        window.close();
+        return;
     }
     if(signalPool.contains(0, "start")) {
         delete scene;
         signalPool.del(0, "start");
+        scene = new StartScene(&window);
+    }
+    if(signalPool.contains(0, "game")) {
+        delete scene;
+        signalPool.del(0, "game");
         scene = new GameScene(&window);
+    }
+    if(signalPool.contains(0, "end")) {
+        auto data = static_cast<GameScene*>(scene) -> data();
+        delete scene;
+        signalPool.del(0, "end");
+        scene = new EndScene(&window, std :: get<0>(data), std :: get<1>(data), std :: get<2>(data), std :: get<3>(data));
     }
 
     if(scene) {
@@ -72,6 +82,7 @@ void Game :: update() {
     //std :: cerr << deltaTime << std :: endl;
 }
 void Game :: render() {
+    if(!window.isOpen()) return;
     window.clear();
     renderPool.render(&window);
     window.display();

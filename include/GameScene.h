@@ -14,7 +14,10 @@
 class GameScene : public Entity {
 private:
     sf :: RenderTarget* window;
+    float clock = 0.f;
+    const int enemyCount = 40;
 public:
+    std :: tuple<int, float, std :: pair<int, int>, int> data();
     GameScene(sf :: RenderTarget* window);
     virtual ~GameScene();
     virtual void update(const float& deltaTime);

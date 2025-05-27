@@ -6,7 +6,7 @@ void RenderPool :: add(sf :: Drawable* obj, sf :: Transform transform, int layer
 void RenderPool :: render(sf :: RenderTarget* target) {
     sort(pool.begin(), pool.end(), [](const auto &x, const auto &y) {return x.first < y.first;});
     for(const auto &obj : pool) {
-        target -> draw(*obj.second.first, obj.second.second);
+        if(obj.second.first) target -> draw(*obj.second.first, obj.second.second);
     }
     pool.clear();
 }
