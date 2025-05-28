@@ -14,7 +14,7 @@ Resource :: ~Resource() {
 }
 void Resource :: loadFrom(const std :: filesystem :: path &directory) {
     loadImg(directory / "image");
-    //loadFont(directory / "font");
+    loadFont(directory / "font");
     //loadSound(directory / "sound");
     // for(const std :: string &music : {"menu", "game", "win", "dead"})
     //     getSound(music + ".wav") -> setLoop(true), getSound(music + ".wav") -> setVolume(5.f);

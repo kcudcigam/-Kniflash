@@ -2,7 +2,7 @@
 #include <iostream>
 extern Resource resource;
 extern SignalPool signalPool; 
-GameScene :: GameScene(sf :: RenderTarget* window) : Entity(), window(window) {
+GameScene :: GameScene(sf :: RenderWindow* window) : Entity({}, window) {
     auto background = new StaticEntity(new sf :: Sprite(*resource.getImg("background.jpg")));
     background -> transform.scale(1.f, 1.f);
     addChild(background);
@@ -61,7 +61,7 @@ void GameScene :: update(const float& deltaTime) {
         signalPool.add(uuid(), "end");
         player -> hide();
         const auto tmp = data();
-        auto end = new EndScene(window, std :: get<0>(tmp), std :: get<1>(tmp), std :: get<2>(tmp), std :: get<3>(tmp));
+        auto end = new EndScene(std :: get<0>(tmp), std :: get<1>(tmp), std :: get<2>(tmp), std :: get<3>(tmp));
         end -> transform = sf :: Transform().translate(player -> transform.transformPoint(0.f, 0.f));
         addChild(end);
     }
@@ -76,6 +76,6 @@ void GameScene :: update(const float& deltaTime) {
     const float &zoom = 1.f;
     auto position = player -> getTransform().transformPoint(0.f, 0.f);
     sf :: Vector2f center = {std :: floor(position.x + 0.5f), std :: floor(position.y + 0.5f)};
-    const sf :: Vector2f &size = {static_cast<float>(window -> getSize().x), static_cast<float>(window -> getSize().y)};
-    auto view = sf :: View(center, size); view.zoom(zoom); window -> setView(view);
+    const sf :: Vector2f &size = {static_cast<float>(getWindow() -> getSize().x), static_cast<float>(getWindow() -> getSize().y)};
+    auto view = sf :: View(center, size); view.zoom(zoom); getWindow() -> setView(view);
 }

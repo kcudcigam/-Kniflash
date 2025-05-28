@@ -1,7 +1,7 @@
 #include "Entity.h"
 extern std :: mt19937_64 rnd;
 
-Entity :: Entity(const std :: vector<std :: string> &tag) : ancestor(nullptr), id(rnd()) {
+Entity :: Entity(const std :: vector<std :: string> &tag, sf :: RenderWindow* window) : ancestor(nullptr), id(rnd()), window(window) {
     for(const auto &i : tag) tags[i] = true;
 }
 Entity :: ~Entity() {
@@ -42,6 +42,9 @@ Entity* Entity :: find(uint64_t uuid) {
     }
     return nullptr;
 }
+sf :: RenderWindow* Entity :: getWindow() const {
+    return window;
+} 
 sf :: Transform Entity :: getTransform() const {
     if(ancestor == nullptr) return transform;
     return ancestor -> getTransform() * transform;

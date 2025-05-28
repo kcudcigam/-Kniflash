@@ -8,15 +8,17 @@ private:
     uint64_t id;
     std :: map<std :: string, bool> tags;
     bool alive;
+    sf :: RenderWindow* window;
 protected:
     std :: vector<Entity*> components;
 public:
     sf :: Transform transform;
-    Entity(const std :: vector<std :: string> &tag = {});
+    Entity(const std :: vector<std :: string> &tag = {}, sf :: RenderWindow* window = nullptr);
     virtual ~Entity();
     Entity* super();
     Entity* root();
     uint64_t uuid() const;
+    sf :: RenderWindow* getWindow() const;
     bool contains(const std :: string& tag) const;
     sf :: Transform getTransform() const;
     void addChild(Entity* child);

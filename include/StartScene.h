@@ -7,13 +7,13 @@
 #include "Bush.h"
 #include "EnemyController.h"
 #include "KnifeManager.h"
+#include "Button.h"
 
 class StartScene : public Entity {
 private:
-    sf :: RenderTarget* window;
     const int enemyCount = 6;
 public:
-    StartScene(sf :: RenderTarget* window);
+    StartScene(sf :: RenderWindow* window);
     virtual ~StartScene();
     virtual void update(const float& deltaTime);
 };
