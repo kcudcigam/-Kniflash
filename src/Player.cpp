@@ -29,8 +29,12 @@ Player :: Player(const Border* border, const std :: vector<std :: string> &tag, 
 
     if(interactive) {
         auto healthBar = new HealthBar(uuid(), 3, 0, {"healthbar"});
-        healthBar -> transform.translate(-5.f, -110.f).scale(4.f, 5.f);
+        healthBar -> transform.translate(-5.f, -90.f).scale(4.f, 5.f);
         addChild(healthBar);
+
+        auto killNumber = new KillNumber(3, 0, {"killNumber"});
+        killNumber -> transform.translate(-60.f, -170.f).scale(1.f, 1.f);
+        addChild(killNumber);
     }
 
     auto knifeCircle = new KnifeCircle(4, {"knifeCircle"});
@@ -154,6 +158,7 @@ void Player :: update(const float& deltaTime) {
             return;
         }
 
+        static_cast<KillNumber*>(find("killNumber").back()) -> set(static_cast<Statistics*>(root() -> find("statistics").back()) -> query(uuid()));
         combat();
 
         if(signalPool.contains(find("player-hitbox").back() -> uuid(), "speedup")) {

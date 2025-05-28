@@ -20,7 +20,7 @@ void EnemyController :: update(const float &deltaTime) {
     
     Entity :: update(deltaTime);
 
-    if(!super()) return;
+    if(!super() || signalPool.contains(0, "pause")) return;
 
     delta += deltaTime;
     

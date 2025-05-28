@@ -8,6 +8,7 @@
 #include "EnemyController.h"
 #include "KnifeManager.h"
 #include "Button.h"
+#include "Transparency.h"
 
 class StartScene : public Entity {
 private:

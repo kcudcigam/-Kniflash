@@ -14,6 +14,7 @@ public:
     virtual ~DynamicEntity();
     void add(const std :: string &key, const Animation &value);
     void play(std :: string key, bool priority = false);
+    sf :: Sprite* get();
     const Animation* getAnimation(const std :: string& animation) const;
     virtual void update(const float& deltaTime);
 };

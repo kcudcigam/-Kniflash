@@ -13,6 +13,7 @@
 #include "Rotater.h"
 #include "FlyKnife.h"
 #include "Statistics.h"
+#include "KillNumber.h"
 
 class Player : public Entity {
 private:

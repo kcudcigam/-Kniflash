@@ -17,6 +17,9 @@ void StaticEntity :: set(sf :: Drawable *obj) {
 void StaticEntity :: setStatus(bool status) {
     active = status;
 }
+sf :: Drawable* StaticEntity :: get() {
+    return obj;
+}
 void StaticEntity :: update(const float &deltaTime) {
     if(!active) return;
     Entity :: update(deltaTime);

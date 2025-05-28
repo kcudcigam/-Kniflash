@@ -25,6 +25,9 @@ void DynamicEntity :: play(std :: string key, bool priority) {
     fixed = priority;
     currentAnimation = key;
 }
+sf :: Sprite* DynamicEntity :: get() {
+    return &sprite;
+}
 const Animation* DynamicEntity :: getAnimation(const std :: string &animation) const {
     if(!animations.contains(animation)) return nullptr;
     return &animations.at(currentAnimation);

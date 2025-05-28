@@ -3,7 +3,9 @@
 extern Resource resource;
 extern SignalPool signalPool; 
 GameScene :: GameScene(sf :: RenderWindow* window) : Entity({}, window) {
-    auto background = new StaticEntity(new sf :: Sprite(*resource.getImg("background.jpg")));
+    auto pic = new sf :: Sprite(*resource.getImg("background.jpg"));
+    pic -> setColor(sf :: Color(255, 255, 224));
+    auto background = new StaticEntity(pic);
     background -> transform.scale(1.f, 1.f);
     addChild(background);
 
@@ -38,6 +40,15 @@ GameScene :: GameScene(sf :: RenderWindow* window) : Entity({}, window) {
 
     auto statistics = new Statistics({"statistics"});
     addChild(statistics);
+
+    auto shade = new sf :: RectangleShape();
+    shade -> setSize(sf :: Vector2f (static_cast<float>(getWindow() -> getSize().x), static_cast<float>(getWindow() -> getSize().y)));
+    shade -> setOrigin(shade -> getSize() / 2.f);
+    shade -> setPosition(border -> getBase());
+    shade -> setFillColor(sf :: Color :: Black);
+    addChild(new StaticEntity(shade, 20, 0, {"shade"}));
+    addChild(new Transparency(uuid(), "shadeTransparency", 255.f, 0.f, 0.8f, 0.2f, {"shadeTransparency"}));
+    signalPool.add(0, "pause");
 }
 GameScene :: ~GameScene() {
 
@@ -47,11 +58,18 @@ std :: tuple<int, float, std :: pair<int, int>, int> GameScene :: data() {
     for(auto enemy : enemies) {
         if(static_cast<Player*>(enemy) -> isActive()) cnt++;
     }
-    return {static_cast<Player*>(find("user").back()) -> getSkin(), clock, std :: make_pair(enemyCount - cnt + 1, enemyCount), static_cast<Statistics*>(find("statistics").back()) -> query(find("user").back() -> uuid())};
+    return {static_cast<Player*>(find("user").back()) -> getSkin(), clock, std :: make_pair(cnt + 1, enemyCount), static_cast<Statistics*>(find("statistics").back()) -> query(find("user").back() -> uuid())};
 }
+
 void GameScene :: update(const float& deltaTime) {
     clock += deltaTime;
     Entity :: update(deltaTime);
+    auto shade = static_cast<sf :: RectangleShape*>(static_cast<StaticEntity*>(find("shade").back()) -> get());
+    shade -> setFillColor(sf :: Color(shade -> getFillColor().r, shade -> getFillColor().g, shade -> getFillColor().b, signalPool.query(uuid(), "shadeTransparency")));
+    if(!static_cast<Transparency*>(find("shadeTransparency").back()) -> isActive()) {
+        signalPool.del(0, "pause");
+    }
+
     Player* player = static_cast<Player*>(find("user").back());
     auto enemies = find("enemy"); int cnt = 0;
     for(auto enemy : enemies) {
@@ -61,9 +79,22 @@ void GameScene :: update(const float& deltaTime) {
         signalPool.add(uuid(), "end");
         player -> hide();
         const auto tmp = data();
-        auto end = new EndScene(std :: get<0>(tmp), std :: get<1>(tmp), std :: get<2>(tmp), std :: get<3>(tmp));
+        auto end = new EndScene(getWindow(), std :: get<0>(tmp), std :: get<1>(tmp), std :: get<2>(tmp), std :: get<3>(tmp));
         end -> transform = sf :: Transform().translate(player -> transform.transformPoint(0.f, 0.f));
         addChild(end);
+    }
+    const int border = 4500;
+    if(cnt <= enemyCount / 2) {
+        signalPool.add(0, "border", border / 2);
+    }
+    if(cnt <= enemyCount / 4) {
+        signalPool.add(0, "border", border / 3);
+    }
+    if(cnt <= enemyCount / 10) {
+        signalPool.add(0, "border", border / 6);
+    }
+    if(cnt <= enemyCount / 20) {
+        signalPool.add(0, "border", border / 8);
     }
     //std :: cerr << static_cast<Statistics*>(find("statistics").back()) -> query(find("user").back() -> uuid()) << std :: endl;
     /*

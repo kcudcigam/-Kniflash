@@ -1,5 +1,6 @@
 #include "Border.h"
 extern std :: mt19937_64 rnd;
+extern SignalPool signalPool;
 
 Border :: Border(sf :: Vector2f base, float radius, int layer, int order, const std :: vector<std :: string> &tag)
 : Entity(tag), base(base), radius(radius), layer(layer), order(order) {
@@ -50,4 +51,10 @@ sf :: Vector2f Border :: constrains(sf :: Vector2f position) const {
     auto distance = [](sf :: Vector2f d) {return d.x * d.x + d.y * d.y;};
     auto offset = base - position;
     return offset - offset / sqrtf(distance(offset)) * (radius - 2.f);
+}
+void Border :: update(const float &deltaTime) {
+    if(signalPool.contains(0, "border") && signalPool.query(0, "border") < radius) {
+        set(getBase(), std :: max(static_cast<float>(signalPool.query(0, "border")), radius - velocity * deltaTime));
+    }
+    Entity :: update(deltaTime);
 }

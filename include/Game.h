@@ -8,6 +8,7 @@
 #include "SignalPool.h"
 #include "EndScene.h"
 #include "StartScene.h"
+#include "Frame.h"
 
 class Game {
 private:

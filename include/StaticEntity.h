@@ -12,5 +12,6 @@ public:
     virtual ~StaticEntity();
     void set(sf :: Drawable *obj);
     void setStatus(bool status);
+    sf :: Drawable* get();
     virtual void update(const float& deltaTime);
 };

@@ -10,7 +10,7 @@ PlayerController :: ~PlayerController() {
 }
 void PlayerController :: update(const float &deltaTime) {
     Entity :: update(deltaTime);
-    if(!super()) return;
+    if(!super() || signalPool.contains(0, "pause")) return;
     if(sf :: Keyboard :: isKeyPressed(sf :: Keyboard :: A) || sf :: Keyboard :: isKeyPressed(sf :: Keyboard :: Left))
         signalPool.add(super() -> uuid(), "Moveleft");
     if(sf :: Keyboard :: isKeyPressed(sf :: Keyboard :: D) || sf :: Keyboard :: isKeyPressed(sf :: Keyboard :: Right))

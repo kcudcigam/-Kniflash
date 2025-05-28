@@ -11,6 +11,7 @@
 #include "EnemyController.h"
 #include "KnifeManager.h"
 #include "EndScene.h"
+#include "Transparency.h"
 
 class GameScene : public Entity {
 private:
