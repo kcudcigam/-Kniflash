@@ -17,7 +17,7 @@
 class GameScene : public Entity {
 private:
     float clock = 0.f;
-    const int enemyCount = 40;
+    const int enemyCount = 49;
 public:
     std :: tuple<int, float, std :: pair<int, int>, int> data();
     GameScene(sf :: RenderWindow* window);

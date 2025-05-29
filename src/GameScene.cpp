@@ -3,6 +3,7 @@
 extern Resource resource;
 extern SignalPool signalPool; 
 GameScene :: GameScene(sf :: RenderWindow* window) : Entity({}, window) {
+    signalPool.clear();
     auto pic = new sf :: Sprite(*resource.getImg("background.jpg"));
     pic -> setColor(sf :: Color(255, 255, 224));
     auto background = new StaticEntity(pic);
@@ -61,7 +62,7 @@ std :: tuple<int, float, std :: pair<int, int>, int> GameScene :: data() {
     for(auto enemy : enemies) {
         if(static_cast<Player*>(enemy) -> isActive()) cnt++;
     }
-    return {static_cast<Player*>(find("user").back()) -> getSkin(), clock, std :: make_pair(cnt + 1, enemyCount), static_cast<Statistics*>(find("statistics").back()) -> query(find("user").back() -> uuid())};
+    return {static_cast<Player*>(find("user").back()) -> getSkin(), clock, std :: make_pair(cnt + 1, enemyCount + 1), static_cast<Statistics*>(find("statistics").back()) -> query(find("user").back() -> uuid())};
 }
 
 void GameScene :: update(const float& deltaTime) {
@@ -87,16 +88,17 @@ void GameScene :: update(const float& deltaTime) {
         addChild(end);
     }
     const int border = 4500;
-    if(cnt <= enemyCount / 2) {
+    const int survive = cnt + 1, all = enemyCount + 1;
+    if(survive * 2 <= all) {
         signalPool.add(0, "border", border / 2);
     }
-    if(cnt <= enemyCount / 4) {
+    if(survive * 4 <= all) {
         signalPool.add(0, "border", border / 3);
     }
-    if(cnt <= enemyCount / 10) {
+    if(survive * 10 <= all) {
         signalPool.add(0, "border", border / 4);
     }
-    if(cnt < enemyCount / 20) {
+    if(survive * 20 <= all) {
         signalPool.add(0, "border", border / 5);
     }
     //std :: cerr << static_cast<Statistics*>(find("statistics").back()) -> query(find("user").back() -> uuid()) << std :: endl;

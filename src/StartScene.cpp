@@ -4,6 +4,7 @@ extern Resource resource;
 extern SignalPool signalPool;
 
 StartScene :: StartScene(sf :: RenderWindow* window) : Entity({}, window) {
+    signalPool.clear();
     auto pic = new sf :: Sprite(*resource.getImg("background.jpg"));
     pic -> setColor(sf :: Color(255, 255, 224));
     auto background = new StaticEntity(pic);

@@ -34,11 +34,11 @@ Player :: Player(const Border* border, const std :: vector<std :: string> &tag, 
 
     if(interactive) {
         auto healthBar = new HealthBar(uuid(), 3, 0, {"healthbar"});
-        healthBar -> transform.translate(-5.f, -95.f).scale(4.f, 5.f);
+        healthBar -> transform.translate(-5.f, -100.f).scale(4.f, 5.f);
         addChild(healthBar);
 
         auto killNumber = new KillNumber(3, 0, {"killNumber"});
-        killNumber -> transform.translate(-60.f, -170.f).scale(1.f, 1.f);
+        killNumber -> transform.translate(-60.f, -175.f).scale(1.f, 1.f);
         addChild(killNumber);
     }
 

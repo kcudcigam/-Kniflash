@@ -67,12 +67,10 @@ void Game :: update() {
     }
     if(signalPool.contains(0, "start")) {
         delete scene;
-        signalPool.clear();
         scene = new StartScene(&window);
     }
     if(signalPool.contains(0, "game")) {
         delete scene;
-        signalPool.del(0, "game");
         scene = new GameScene(&window);
     }
 
