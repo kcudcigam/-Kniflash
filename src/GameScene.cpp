@@ -28,6 +28,9 @@ GameScene :: GameScene(sf :: RenderWindow* window) : Entity({}, window) {
         enemy -> addChild(controller);
         addChild(enemy);
     }
+
+    auto lineDrawer = new LineDrawer({"lineDrawer"});
+    addChild(lineDrawer);
     //auto area = new Hitbox(sf :: FloatRect(player -> transform.transformPoint(0.f, 0.f) + sf :: Vector2f(200.f, 200.f), sf :: Vector2f(100.f, 100.f)), "player-hitbox", "hurt", 0, {"debug"});
     //auto area_timer = new Timer(0.8f, uuid(), "area", 0, {"debug_timer"});
     //addChild(area_timer);
@@ -91,10 +94,10 @@ void GameScene :: update(const float& deltaTime) {
         signalPool.add(0, "border", border / 3);
     }
     if(cnt <= enemyCount / 10) {
-        signalPool.add(0, "border", border / 6);
+        signalPool.add(0, "border", border / 4);
     }
-    if(cnt <= enemyCount / 20) {
-        signalPool.add(0, "border", border / 8);
+    if(cnt < enemyCount / 20) {
+        signalPool.add(0, "border", border / 5);
     }
     //std :: cerr << static_cast<Statistics*>(find("statistics").back()) -> query(find("user").back() -> uuid()) << std :: endl;
     /*

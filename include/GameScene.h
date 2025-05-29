@@ -12,6 +12,7 @@
 #include "KnifeManager.h"
 #include "EndScene.h"
 #include "Transparency.h"
+#include "LineDrawer.h"
 
 class GameScene : public Entity {
 private:

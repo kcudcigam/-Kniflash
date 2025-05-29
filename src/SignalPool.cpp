@@ -1,5 +1,8 @@
 #include "SignalPool.h"
 
+void SignalPool :: clear() {
+    pool.clear();
+}
 void SignalPool :: add(uint64_t receiver, const std :: string &signal, uint64_t content) {
     pool[receiver][signal] = content;
 }

@@ -17,4 +17,5 @@ void KnifeManager :: update(const float& deltaTime) {
     }
     swap(components, knives);
     Entity :: update(deltaTime);
+    
 }

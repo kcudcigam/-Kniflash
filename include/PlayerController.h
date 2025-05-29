@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include "SignalPool.h"
 #include "Timer.h"
+#include "LineDrawer.h"
 
 class PlayerController : public Entity {
 public:

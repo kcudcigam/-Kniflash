@@ -4,6 +4,7 @@
 #include "RenderPool.h"
 #include "Resource.h"
 #include "SignalPool.h"
+#include "SpriteCopier.h"
 
 class FlyKnife : public Entity {
 private:
@@ -13,7 +14,7 @@ private:
     float delta = 0.f;
 
 public:
-    FlyKnife(uint64_t owner, const sf :: Vector2f &pos, const sf :: Vector2f &v, const std :: vector<std :: string> &tag = {});
+    FlyKnife(uint64_t owner, const sf :: Vector2f &pos, const sf :: Vector2f &v, int layer = 0, int order = 0, const std :: vector<std :: string> &tag = {});
     virtual ~FlyKnife();
     bool isActive() const;
     virtual void update(const float& deltaTime);

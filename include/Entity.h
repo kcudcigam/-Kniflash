@@ -7,7 +7,8 @@ private:
     Entity* ancestor;
     uint64_t id;
     std :: map<std :: string, bool> tags;
-    bool alive;
+    std :: map<std :: string, std :: vector<Entity*> > sub;
+    std :: map<uint64_t, Entity*> ids;
     sf :: RenderWindow* window;
 protected:
     std :: vector<Entity*> components;

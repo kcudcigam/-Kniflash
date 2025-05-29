@@ -12,6 +12,9 @@ void DynamicEntity :: add(const std :: string &key, const Animation &value) {
     animations.emplace(key, value);
     animations.at(key).reset();
 }
+void DynamicEntity :: reset() {
+    if(currentAnimation != "") animations.at(currentAnimation).reset();
+}
 void DynamicEntity :: play(std :: string key, bool priority) {
     if(key == currentAnimation) {
         return;
@@ -34,7 +37,7 @@ const Animation* DynamicEntity :: getAnimation(const std :: string &animation) c
 }
 void DynamicEntity :: update(const float& deltaTime) {
     Entity :: update(deltaTime);
-    if(animations.contains(currentAnimation)) {
+    if(animations.contains(currentAnimation) && !animations.at(currentAnimation).end()) {
         animations.at(currentAnimation).play(&sprite, deltaTime);
         renderPool.add(&sprite, getTransform(), layer, order);
     }

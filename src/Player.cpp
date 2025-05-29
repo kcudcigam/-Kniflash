@@ -2,7 +2,6 @@
 extern Resource resource;
 extern SignalPool signalPool;
 extern std :: mt19937_64 rnd;
-#include <iostream>
 Player :: Player(const Border* border, const std :: vector<std :: string> &tag, bool interactive) : Entity(tag), border(border), interactive(interactive) {
     if(border) {
         transform.translate(border -> getBase());
@@ -18,10 +17,16 @@ Player :: Player(const Border* border, const std :: vector<std :: string> &tag, 
     character -> add("dead", Animation(combineFrame(resource.getImg(img), {0, 6}, {9, 6}, {64, 64}, {32.f, 32.f}), 0.1f, false));
     addChild(character);
 
+    auto copy = new SpriteCopier(character -> get(), 12, 0.004, 5000.f, 1, -1, {"copy"});
+    copy -> set(false);
+    character -> addChild(copy);
+
+
     auto targetCircle = new sf :: Sprite(*resource.getImg("circle.png"));
     targetCircle -> setOrigin(100.f, 100.f);
+    targetCircle -> setColor(sf :: Color(255, 0, 0, 180));
     auto target = new StaticEntity(targetCircle, 1, 1, {"target"});
-    target -> transform.scale(0.75f, 0.75f);
+    target -> transform.scale(0.8f, 0.8f);
     target -> transform.translate(0.f, 10.f);
     target -> addChild(new Rotater(360.f));
     target -> setStatus(false);
@@ -29,7 +34,7 @@ Player :: Player(const Border* border, const std :: vector<std :: string> &tag, 
 
     if(interactive) {
         auto healthBar = new HealthBar(uuid(), 3, 0, {"healthbar"});
-        healthBar -> transform.translate(-5.f, -90.f).scale(4.f, 5.f);
+        healthBar -> transform.translate(-5.f, -95.f).scale(4.f, 5.f);
         addChild(healthBar);
 
         auto killNumber = new KillNumber(3, 0, {"killNumber"});
@@ -46,11 +51,21 @@ Player :: Player(const Border* border, const std :: vector<std :: string> &tag, 
     auto speedUp = new Timer(3.f, uuid(), "Inspeedup", 0, {"speedup"});
     addChild(speedUp);
 
-    auto circle = new DynamicEntity(0, 2, {"speedCircle"});
-    circle -> add("animation", Animation(combineFrame(resource.getImg("effect.png"), {0, 2}, {4, 2}, {96, 96}, {48.f, 48.f}), 0.05f));    
-    circle -> transform.translate(0.f, 40.f);
-    circle -> transform.scale(2.5f, 2.5f);
-    addChild(circle);
+    auto regen = new DynamicEntity(1, 5, {"regen"});
+    regen -> add("animation", Animation(combineFrame(resource.getImg("regen.png"), {0, 0}, {7, 0}, {96, 96}, {48.f, 48.f}), 0.08f, false));    
+    regen -> transform.translate(0.f, -15.f);
+    regen -> transform.scale(3.f, 3.f);
+    addChild(regen);
+
+    auto shadeShape = new EllipseShape(sf :: Vector2f(42.f, 24.f));
+    shadeShape -> setFillColor(sf :: Color(0.f, 0.f, 0.f, 160.f));
+    auto shade = new StaticEntity(shadeShape, 0, 100, {"playerShade"});
+    shade -> transform.translate(-42.f, 50.f);
+    addChild(shade);
+
+    auto shadeCopy = new ShapeCopier(shadeShape, 10, 0.01, 2000.f, 1, -1, {"shadeCopy"});
+    shadeCopy -> set(false);
+    shade -> addChild(shadeCopy);
 
     auto hurtTimer = new Timer(0.2f, 0, "", 0, {"hurtTimer"});
     addChild(hurtTimer);
@@ -80,7 +95,7 @@ uint64_t Player :: nearest() {
     std :: vector<Entity*> enemies;
     for(auto player : players)
         if(player -> uuid() != this -> uuid() && !static_cast<Player*>(player) -> isDead()) enemies.emplace_back(player);
-    if(enemies.empty()) return 0;
+    if(enemies.empty() || !static_cast<KnifeCircle*>(find("knifeCircle").back()) -> getNumber()) return 0;
     auto distance = [](const sf :: Vector2f &u) {return u.x * u.x + u.y * u.y;};
     auto target = enemies.back(); enemies.pop_back();
     for(auto enemy : enemies) {
@@ -88,7 +103,7 @@ uint64_t Player :: nearest() {
         const auto y = distance(target -> getTransform().transformPoint(0.f, 0.f) - getTransform().transformPoint(0.f, 0.f));
         if(x < y) target = enemy;
     }
-    const float r = static_cast<KnifeCircle*>(find("knifeCircle").back()) -> getRadius() + 10.f, d = 750.f;
+    const float r = static_cast<KnifeCircle*>(find("knifeCircle").back()) -> getRadius() + 10.f, d = 800.f;
     auto dis = distance(target -> getTransform().transformPoint(0.f, 0.f) - getTransform().transformPoint(0.f, 0.f));
     if(dis > r * r && dis < d * d) return target -> uuid();
     return 0;
@@ -106,7 +121,7 @@ void Player :: attack(const sf :: Vector2f &u) {
     d /= std :: sqrt(d.x * d.x + d.y * d.y);
     auto knifeCircle = static_cast<KnifeCircle*>(find("knifeCircle").back());
     if(knifeCircle -> getNumber()) {
-        root() -> find("knifeManager").back() -> addChild(new FlyKnife(uuid(), knifeCircle -> getRadius() * d + getTransform().transformPoint(0.f, 0.f), d));
+        root() -> find("knifeManager").back() -> addChild(new FlyKnife(uuid(), knifeCircle -> getRadius() * d + getTransform().transformPoint(0.f, 0.f), d, 1, 2));
         knifeCircle -> inc();
     }
 }
@@ -164,10 +179,16 @@ void Player :: update(const float& deltaTime) {
         if(signalPool.contains(find("player-hitbox").back() -> uuid(), "speedup")) {
             signalPool.del(find("player-hitbox").back() -> uuid(), "speedup");
             static_cast<Timer*>(find("speedup").back()) -> reset();
-            static_cast<DynamicEntity*>(find("speedCircle").back()) -> play("animation");
+            //static_cast<DynamicEntity*>(find("speedCircle").back()) -> play("animation");
+            static_cast<SpriteCopier*>(find("copy").back()) -> set(true);
+            static_cast<ShapeCopier*>(find("shadeCopy").back()) -> set(true);
+            //static_cast<StaticEntity*>(find("playerShade").back()) -> setStatus(false);
         }
         if(!signalPool.contains(uuid(), "Inspeedup")) {
-            static_cast<DynamicEntity*>(find("speedCircle").back()) -> play("");
+            //static_cast<DynamicEntity*>(find("speedCircle").back()) -> play("");
+            static_cast<SpriteCopier*>(find("copy").back()) -> set(false);
+            static_cast<ShapeCopier*>(find("shadeCopy").back()) -> set(false);
+            //static_cast<StaticEntity*>(find("playerShade").back()) -> setStatus(true);
         }
         if(signalPool.contains(uuid(), "targeted")) {
             static_cast<StaticEntity*>(find("target").back()) -> setStatus(true);
@@ -199,6 +220,8 @@ void Player :: update(const float& deltaTime) {
         if(signalPool.contains(find("player-hitbox").back() -> uuid(), "healthup")) {
             signalPool.del(find("player-hitbox").back() -> uuid(), "healthup");
             static_cast<HealthBar*>(find("healthbar").back()) -> recover();
+            static_cast<DynamicEntity*>(find("regen").back()) -> reset();
+            static_cast<DynamicEntity*>(find("regen").back()) -> play("animation");
         }
     }
 

@@ -1,8 +1,8 @@
 #include "StaticEntity.h"
 extern RenderPool renderPool;
 
-StaticEntity :: StaticEntity(sf :: Drawable *obj, int layer, int order, const std :: vector<std :: string> &tag)
- : Entity(tag), obj(obj), layer(layer), order(order) {
+StaticEntity :: StaticEntity(sf :: Drawable *obj, int layer, int order, const std :: vector<std :: string> &tag, bool combineTransform)
+ : Entity(tag), obj(obj), layer(layer), order(order), combineTransform(combineTransform) {
         
 }
 StaticEntity :: ~StaticEntity() {
@@ -25,6 +25,7 @@ void StaticEntity :: update(const float &deltaTime) {
     Entity :: update(deltaTime);
     
     if(obj) {
-        renderPool.add(obj, getTransform(), layer, order);
+        if(combineTransform) renderPool.add(obj, getTransform(), layer, order);
+        else renderPool.add(obj, transform, layer, order);
     }
 }

@@ -2,7 +2,6 @@
 extern Resource resource;
 extern SignalPool signalPool;
 
-#include <iostream>
 
 EndScene :: EndScene(sf :: RenderWindow* window, int skin, float clock, std :: pair<int, int> rank, int kills) : Entity() {
     auto shade = new sf :: RectangleShape();
@@ -11,7 +10,7 @@ EndScene :: EndScene(sf :: RenderWindow* window, int skin, float clock, std :: p
     shade -> setFillColor(sf :: Color :: Black);
     addChild(new StaticEntity(shade, 20, 0, {"endShade"}));
 
-    auto text = new sf :: Text(L"Game Over", *resource.getFont("font-title.ttf"), 180);
+    auto text = new sf :: Text(rank.first == 1 ? L"You Win" : L"Game Over", *resource.getFont("font-title.ttf"), 180);
     const sf::FloatRect &textRect = text -> getLocalBounds();
     text -> setOrigin(textRect.left + textRect.width / 2.f, textRect.top  + textRect.height / 2.f);
     auto title = new StaticEntity(text, 500, 0, {"title"});

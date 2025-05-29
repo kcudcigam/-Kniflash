@@ -15,8 +15,11 @@ void KillNumber :: set(int number) {
     auto sprite = new sf :: Sprite; img.load(sprite);
     auto icon = new StaticEntity(sprite, layer, order);
     //icon -> transform.scale(1.f, 1.f);
-    auto character = new sf :: Text(std :: to_wstring(kill), *resource.getFont("font-title.ttf"), 48);
-    character -> setFillColor(sf :: Color(40, 40, 40));
+    auto character = new sf :: Text(std :: to_wstring(kill), *resource.getFont("font-title.ttf"), 42);
+    character -> setOutlineColor(sf :: Color :: Black);
+    character -> setOutlineThickness(4.f);
+    character -> setPosition(0.f, 8.f);
+
     auto text = new StaticEntity(character, layer, order);
     text -> transform.translate(80.f, 0.f);
     addChild(icon), addChild(text);

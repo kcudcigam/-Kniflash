@@ -1,6 +1,5 @@
 #pragma once
 #include <random>
-//#include <math>
 #include "Entity.h"
 #include "Resource.h"
 #include "SignalPool.h"
@@ -14,6 +13,9 @@
 #include "FlyKnife.h"
 #include "Statistics.h"
 #include "KillNumber.h"
+#include "SpriteCopier.h"
+#include "EllipseShape.h"
+#include "ShapeCopier.h"
 
 class Player : public Entity {
 private:

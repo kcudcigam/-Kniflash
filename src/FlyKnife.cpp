@@ -2,15 +2,17 @@
 extern Resource resource;
 extern SignalPool signalPool;
 
-FlyKnife :: FlyKnife(uint64_t owner, const sf :: Vector2f &pos, const sf :: Vector2f &v, const std :: vector<std :: string> &tag)
+FlyKnife :: FlyKnife(uint64_t owner, const sf :: Vector2f &pos, const sf :: Vector2f &v, int layer, int order, const std :: vector<std :: string> &tag)
  : owner(owner), Entity(tag), pos(pos), v(v) {
     
     auto sprite = new sf :: Sprite();
     combineFrame(resource.getImg("props.png"), {10, 9}, {10, 9}, {64, 64}, {0.f, 64.f}).back().load(sprite);
-    auto knife = new StaticEntity(sprite, 1, 2);
+    auto knife = new StaticEntity(sprite, layer, order, {"knife"});
 
     knife -> transform.rotate(45.f);
+    knife -> addChild(new SpriteCopier(static_cast<sf :: Sprite*>(knife -> get()), 12, 0.004f, 5000, layer, order));
     addChild(knife);
+    
 
     transform.translate(pos);
     transform.rotate(atan2f(v.y, v.x) * 180.f / acosf(-1.f), -delta, 0.f);
@@ -21,6 +23,7 @@ FlyKnife :: ~FlyKnife() {
 bool FlyKnife :: isActive() const {
     return delta < maxd;
 }
+
 void FlyKnife :: update(const float &deltaTime) {
     if(!isActive()) return;
     delta += deltaTime * velocity;
