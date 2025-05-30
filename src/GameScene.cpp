@@ -50,11 +50,11 @@ GameScene :: GameScene(sf :: RenderWindow* window) : Entity({}, window) {
     shade -> setOrigin(shade -> getSize() / 2.f);
     shade -> setPosition(border -> getBase());
     shade -> setFillColor(sf :: Color :: Black);
-    addChild(new StaticEntity(shade, 20, 0, {"shade"}));
+    addChild(new StaticEntity(shade, 999, 0, {"shade"}));
     addChild(new Transparency(uuid(), "shadeTransparency", 255.f, 0.f, 0.8f, 0.2f, {"shadeTransparency"}));
     signalPool.add(0, "pause");
 
-    auto miniMap = new Minimap(border, 300);
+    auto miniMap = new Minimap(border, 450, {"minimap"});
     addChild(miniMap);
 }
 GameScene :: ~GameScene() {
@@ -85,6 +85,7 @@ void GameScene :: update(const float& deltaTime) {
     if((!player -> isActive() || !cnt) && !signalPool.contains(uuid(), "end")) {
         signalPool.add(uuid(), "end");
         player -> hide();
+        static_cast<Minimap*>(find("minimap").back()) -> hide();
         const auto tmp = data();
         auto end = new EndScene(getWindow(), std :: get<0>(tmp), std :: get<1>(tmp), std :: get<2>(tmp), std :: get<3>(tmp));
         end -> transform = sf :: Transform().translate(player -> transform.transformPoint(0.f, 0.f));
@@ -95,10 +96,10 @@ void GameScene :: update(const float& deltaTime) {
     if(survive * 2 <= all) {
         signalPool.add(0, "border", border / 2);
     }
-    if(survive * 4 <= all) {
+    if(survive * 5 <= all) {
         signalPool.add(0, "border", border / 3);
     }
-    if(survive * 10 <= all) {
+    if(survive * 15 <= all) {
         signalPool.add(0, "border", border / 4);
     }
     if(survive * 20 <= all) {
