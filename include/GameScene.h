@@ -13,6 +13,7 @@
 #include "EndScene.h"
 #include "Transparency.h"
 #include "LineDrawer.h"
+#include "Minimap.h"
 
 class GameScene : public Entity {
 private:

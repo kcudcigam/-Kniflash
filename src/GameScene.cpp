@@ -53,6 +53,9 @@ GameScene :: GameScene(sf :: RenderWindow* window) : Entity({}, window) {
     addChild(new StaticEntity(shade, 20, 0, {"shade"}));
     addChild(new Transparency(uuid(), "shadeTransparency", 255.f, 0.f, 0.8f, 0.2f, {"shadeTransparency"}));
     signalPool.add(0, "pause");
+
+    auto miniMap = new Minimap(border, 300);
+    addChild(miniMap);
 }
 GameScene :: ~GameScene() {
 
