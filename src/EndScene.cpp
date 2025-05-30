@@ -4,8 +4,10 @@ extern SignalPool signalPool;
 
 
 EndScene :: EndScene(sf :: RenderWindow* window, int skin, float clock, std :: pair<int, int> rank, int kills) : Entity() {
+    resource.getSound("game.ogg") -> stop();
+
     auto shade = new sf :: RectangleShape();
-    shade -> setSize(sf :: Vector2f (static_cast<float>(window -> getSize().x), static_cast<float>(window -> getSize().y)));
+    shade -> setSize(sf :: Vector2f (static_cast<float>(window -> getSize().x) + 2.f, static_cast<float>(window -> getSize().y) + 2.f));
     shade -> setOrigin(shade -> getSize() / 2.f);
     shade -> setFillColor(sf :: Color :: Black);
     addChild(new StaticEntity(shade, 20, 0, {"endShade"}));
@@ -47,10 +49,14 @@ EndScene :: EndScene(sf :: RenderWindow* window, int skin, float clock, std :: p
     addChild(new Transparency(uuid(), "killTransparency", 0.f, 255.f, 0.5, 1.6));
     addChild(new Transparency(uuid(), "exitTransparency", 0.f, 255.f, 0.5, 2.2));
 
+    if(rank.first == 1) resource.getSound("win.ogg") -> play();
+    else resource.getSound("over.ogg") -> play();
+
     //std :: cerr << skin << ' ' << clock << ' ' << rank.first << '/' << rank.second << ' ' << kills << std :: endl;
 }
 EndScene :: ~EndScene() {
-
+    resource.getSound("win.ogg") -> stop();
+    resource.getSound("over.ogg") -> stop();
 }
 void EndScene :: update(const float& deltaTime) {
     Entity :: update(deltaTime);

@@ -4,6 +4,7 @@ extern Resource resource;
 extern SignalPool signalPool; 
 GameScene :: GameScene(sf :: RenderWindow* window) : Entity({}, window) {
     signalPool.clear();
+
     auto pic = new sf :: Sprite(*resource.getImg("background.jpg"));
     pic -> setColor(sf :: Color(255, 255, 224));
     auto background = new StaticEntity(pic);
@@ -46,7 +47,7 @@ GameScene :: GameScene(sf :: RenderWindow* window) : Entity({}, window) {
     addChild(statistics);
 
     auto shade = new sf :: RectangleShape();
-    shade -> setSize(sf :: Vector2f (static_cast<float>(getWindow() -> getSize().x), static_cast<float>(getWindow() -> getSize().y)));
+    shade -> setSize(sf :: Vector2f (static_cast<float>(getWindow() -> getSize().x) + 1000.f, static_cast<float>(getWindow() -> getSize().y) + 1000.f));
     shade -> setOrigin(shade -> getSize() / 2.f);
     shade -> setPosition(border -> getBase());
     shade -> setFillColor(sf :: Color :: Black);
@@ -56,6 +57,8 @@ GameScene :: GameScene(sf :: RenderWindow* window) : Entity({}, window) {
 
     auto miniMap = new Minimap(border, 450, {"minimap"});
     addChild(miniMap);
+
+    resource.getSound("game.ogg") -> play();
 }
 GameScene :: ~GameScene() {
 
@@ -73,6 +76,8 @@ void GameScene :: update(const float& deltaTime) {
     Entity :: update(deltaTime);
     auto shade = static_cast<sf :: RectangleShape*>(static_cast<StaticEntity*>(find("shade").back()) -> get());
     shade -> setFillColor(sf :: Color(shade -> getFillColor().r, shade -> getFillColor().g, shade -> getFillColor().b, signalPool.query(uuid(), "shadeTransparency")));
+
+
     if(!static_cast<Transparency*>(find("shadeTransparency").back()) -> isActive()) {
         signalPool.del(0, "pause");
     }

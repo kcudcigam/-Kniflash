@@ -5,6 +5,7 @@ extern SignalPool signalPool;
 
 StartScene :: StartScene(sf :: RenderWindow* window) : Entity({}, window) {
     signalPool.clear();
+
     auto pic = new sf :: Sprite(*resource.getImg("background.jpg"));
     pic -> setColor(sf :: Color(255, 255, 224));
     auto background = new StaticEntity(pic);
@@ -28,7 +29,7 @@ StartScene :: StartScene(sf :: RenderWindow* window) : Entity({}, window) {
     addChild(bush);
 
     auto shade = new sf :: RectangleShape();
-    shade -> setSize(sf :: Vector2f (static_cast<float>(getWindow() -> getSize().x), static_cast<float>(getWindow() -> getSize().y)));
+    shade -> setSize(sf :: Vector2f (static_cast<float>(getWindow() -> getSize().x) + 2.f, static_cast<float>(getWindow() -> getSize().y) + 2.f));
     shade -> setOrigin(shade -> getSize() / 2.f);
     shade -> setPosition(border -> getBase());
     shade -> setFillColor(sf :: Color :: Black);
@@ -55,9 +56,11 @@ StartScene :: StartScene(sf :: RenderWindow* window) : Entity({}, window) {
     sf :: Vector2f center = {std :: floor(position.x + 0.5f), std :: floor(position.y + 0.5f)};
     const sf :: Vector2f &size = {static_cast<float>(getWindow() -> getSize().x), static_cast<float>(getWindow() -> getSize().y)};
     auto view = sf :: View(center, size); view.zoom(zoom); getWindow() -> setView(view);
+
+    resource.getSound("start.ogg") -> play();
 }
 StartScene :: ~StartScene() {
-
+    resource.getSound("start.ogg") -> stop();
 }
 void StartScene :: update(const float &deltaTime) {
     Entity :: update(deltaTime);

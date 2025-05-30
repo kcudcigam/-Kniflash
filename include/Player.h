@@ -16,6 +16,7 @@
 #include "SpriteCopier.h"
 #include "EllipseShape.h"
 #include "ShapeCopier.h"
+#include "SoundPlayer.h"
 
 class Player : public Entity {
 private:

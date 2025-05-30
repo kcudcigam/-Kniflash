@@ -1,0 +1,54 @@
+{
+    "add.wav": {
+        "volume": 100,
+        "loop": false
+    },
+    "attack.wav": { 
+        "volume": 100,
+        "loop": false
+    },
+    "click.wav": { 
+        "volume": 100,
+        "loop": false
+    },
+    "dead.wav": {
+        "volume": 100,
+        "loop": false
+    },
+    "defend.wav": {
+        "volume": 70,
+        "loop": false
+    },
+    "game.ogg": {
+        "volume": 20,
+        "loop": true
+    },
+    "hit.wav": {
+        "volume": 100,
+        "loop": false
+    },
+    "over.ogg": {
+        "volume": 20,
+        "loop": true
+    },
+    "regen.wav": {
+        "volume": 100,
+        "loop": false
+    },
+    "speedup.wav": {
+        "volume": 100,
+        "loop": false
+    },
+    "start.ogg": {
+        "volume": 20,
+        "loop": true
+    },
+    "step.wav": {
+        "volume": 100,
+        "loop": false
+    },
+    "win.ogg": {
+        "volume": 20,
+        "loop": true
+    }
+}

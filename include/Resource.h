@@ -3,6 +3,7 @@
 #include <filesystem>
 #include "SFML/Audio.hpp"
 #include "SFML/Graphics.hpp"
+#include "Json.hpp"
 #include "Animation.h"
 
 class Resource {

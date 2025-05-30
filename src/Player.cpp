@@ -69,6 +69,12 @@ Player :: Player(const Border* border, const std :: vector<std :: string> &tag, 
 
     auto hurtTimer = new Timer(0.2f, 0, "", 0, {"hurtTimer"});
     addChild(hurtTimer);
+
+    auto soundPlayer = new SoundPlayer("user", {"sound"});
+    addChild(soundPlayer);
+
+    auto footstepTimer = new Timer(0.3f, 0, "", 0, {"footstep"});
+    addChild(footstepTimer);
     //
 }
 Player :: ~Player() {
@@ -123,6 +129,7 @@ void Player :: attack(const sf :: Vector2f &u) {
     if(knifeCircle -> getNumber()) {
         root() -> find("knifeManager").back() -> addChild(new FlyKnife(uuid(), knifeCircle -> getRadius() * d + getTransform().transformPoint(0.f, 0.f), d, 1, 2));
         knifeCircle -> inc();
+        static_cast<SoundPlayer*>(find("sound").back()) -> play("attack.wav");
     }
 }
 void Player :: combat() {
@@ -145,9 +152,11 @@ void Player :: hide() {
 void Player :: hurt() {
     if(static_cast<KnifeCircle*>(find("knifeCircle").back()) -> getNumber()) {
         static_cast<KnifeCircle*>(find("knifeCircle").back()) -> inc();
+        static_cast<SoundPlayer*>(find("sound").back()) -> play("defend.wav");
     }
     else {
         static_cast<HealthBar*>(find("healthbar").back()) -> inc();
+        static_cast<SoundPlayer*>(find("sound").back()) -> play("hit.wav");
     }
     static_cast<DynamicEntity*>(find("animation").back()) -> play("hurt", true);
 }
@@ -161,6 +170,7 @@ void Player :: update(const float& deltaTime) {
             if(!signalPool.contains(uuid(), "kill")) {
                 signalPool.add(uuid(), "kill");
                 static_cast<Statistics*>(root() -> find("statistics").back()) -> add(attacker);
+                static_cast<SoundPlayer*>(find("sound").back()) -> play("dead.wav");
             }
             static_cast<DynamicEntity*>(find("animation").back()) -> play("dead", true);
             dead = true;
@@ -182,6 +192,7 @@ void Player :: update(const float& deltaTime) {
             //static_cast<DynamicEntity*>(find("speedCircle").back()) -> play("animation");
             static_cast<SpriteCopier*>(find("copy").back()) -> set(true);
             static_cast<ShapeCopier*>(find("shadeCopy").back()) -> set(true);
+            static_cast<SoundPlayer*>(find("sound").back()) -> play("speedup.wav");
             //static_cast<StaticEntity*>(find("playerShade").back()) -> setStatus(false);
         }
         if(!signalPool.contains(uuid(), "Inspeedup")) {
@@ -216,12 +227,14 @@ void Player :: update(const float& deltaTime) {
         if(signalPool.contains(find("player-hitbox").back() -> uuid(), "knifeup")) {
             signalPool.del(find("player-hitbox").back() -> uuid(), "knifeup");
             static_cast<KnifeCircle*>(find("knifeCircle").back()) -> add();
+            static_cast<SoundPlayer*>(find("sound").back()) -> play("add.wav");
         }
         if(signalPool.contains(find("player-hitbox").back() -> uuid(), "healthup")) {
             signalPool.del(find("player-hitbox").back() -> uuid(), "healthup");
             static_cast<HealthBar*>(find("healthbar").back()) -> recover();
             static_cast<DynamicEntity*>(find("regen").back()) -> reset();
             static_cast<DynamicEntity*>(find("regen").back()) -> play("animation");
+            static_cast<SoundPlayer*>(find("sound").back()) -> play("regen.wav");
         }
     }
 
@@ -236,18 +249,22 @@ void Player :: update(const float& deltaTime) {
         auto reverse = sf :: Transform(); reverse.scale(-1.f, 1.f);
         find("animation").back() -> transform.combine(reverse);
     }
-    float vx = 0.f, vy = 0.f;
+    float vx = 0.f, vy = 0.f; bool flag = false;
     if(signalPool.contains(uuid(), "Moveup")) {
-        vy -= 1.f; signalPool.del(uuid(), "Moveup");
+        vy -= 1.f; signalPool.del(uuid(), "Moveup"); flag = true;
     }
     if(signalPool.contains(uuid(), "Movedown")) {
-        vy += 1.f; signalPool.del(uuid(), "Movedown");
+        vy += 1.f; signalPool.del(uuid(), "Movedown"); flag = true;
     }
     if(signalPool.contains(uuid(), "Moveleft")) {
-        vx -= 1.f; signalPool.del(uuid(), "Moveleft");
+        vx -= 1.f; signalPool.del(uuid(), "Moveleft"); flag = true;
     }
     if(signalPool.contains(uuid(), "Moveright")) {
-        vx += 1.f; signalPool.del(uuid(), "Moveright");
+        vx += 1.f; signalPool.del(uuid(), "Moveright"); flag = true;
+    }
+    if(flag && !static_cast<Timer*>(find("footstep").back()) -> isActive()) {
+        static_cast<Timer*>(find("footstep").back()) -> reset();
+        static_cast<SoundPlayer*>(find("sound").back()) -> play("step.wav");
     }
     if(vx != 0.f || vy != 0.f) {
         const float v = sqrtf(vx * vx + vy * vy);

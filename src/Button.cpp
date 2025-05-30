@@ -1,6 +1,7 @@
 #include "Button.h"
 #include <iostream>
 extern SignalPool signalPool;
+extern Resource resource;
 
 Button :: Button(uint64_t receiver, const std :: string &signal, const std :: wstring &text, sf :: Font* font, int size, const sf :: Vector2f &position, int layer, int order, const std :: vector<std :: string> & tag)
  : receiver(receiver), signal(signal), Entity(tag) {
@@ -32,7 +33,8 @@ void Button :: update(const float &deltaTime) {
         }
         if(pressed && !sf :: Mouse :: isButtonPressed(sf :: Mouse :: Button :: Left)) {
             activated = true;
-            signalPool.add(receiver, signal);           
+            signalPool.add(receiver, signal);
+            resource.getSound("click.wav") -> play();
         }
     }
     else {

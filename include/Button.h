@@ -1,6 +1,7 @@
 #pragma once
 #include "StaticEntity.h"
 #include "SignalPool.h"
+#include "Resource.h"
 
 class Button : public Entity {
 private:

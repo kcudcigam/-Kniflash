@@ -15,7 +15,7 @@ Resource :: ~Resource() {
 void Resource :: loadFrom(const std :: filesystem :: path &directory) {
     loadImg(directory / "image");
     loadFont(directory / "font");
-    //loadSound(directory / "sound");
+    loadSound(directory / "sound");
     // for(const std :: string &music : {"menu", "game", "win", "dead"})
     //     getSound(music + ".wav") -> setLoop(true), getSound(music + ".wav") -> setVolume(5.f);
     // getSound("footstep.wav") -> setPitch(1.4f);
@@ -45,10 +45,20 @@ void Resource :: loadFont(const std :: filesystem ::path &directory) {
     }
 }
 void Resource :: loadSound(const std :: filesystem ::path &directory) {
+    using json = nlohmann :: json;
+    const json config(json :: parse(std :: ifstream(directory / "config.json")));
+    
     for (const auto &file : std :: filesystem :: directory_iterator(directory)) {
+        if(!config.contains(file.path().filename().string())) continue;
         auto soundBuffer = new sf :: SoundBuffer(); soundBuffer -> loadFromFile(file.path().string());
         this -> soundBuffer.emplace(file.path().filename().string(), soundBuffer);
-        this -> sound.emplace(file.path().filename().string(), new sf :: Sound(*soundBuffer));
+        auto music = new sf :: Sound(*soundBuffer);
+        music -> setVolume(config[file.path().filename().string()]["volume"].get<float>());
+        music -> setLoop(config[file.path().filename().string()]["loop"].get<bool>());
+        if(config[file.path().filename().string()].contains("pitch")) {
+            music -> setPitch(config[file.path().filename().string()]["pitch"].get<float>());
+        }
+        this -> sound.emplace(file.path().filename().string(), music);
     }
 }
 sf :: Texture* Resource :: getImg(const std :: string &file) const {
