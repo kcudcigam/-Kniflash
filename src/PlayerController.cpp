@@ -24,7 +24,7 @@ void PlayerController :: update(const float &deltaTime) {
         signalPool.add(target -> uuid(), "targeted");
         const auto start = getTransform().transformPoint(0.f, 0.f), end =  target -> getTransform().transformPoint(0.f, 0.f);
         auto distance = [](const sf :: Vector2f &u) {return u.x * u.x + u.y * u.y;};
-        const float d = 790.f;
+        const float d = 750.f;
         static_cast<LineDrawer*>(root() -> find("lineDrawer").back()) -> draw(getTransform().transformPoint(0.f, 30.f), target -> getTransform().transformPoint(0.f, 30.f), 25.f, 0, 10);
         auto timer = static_cast<Timer*>(find("timer").back());
         if(distance(start - end) < d * d && sf :: Mouse :: isButtonPressed(sf :: Mouse :: Button :: Left) && !timer -> isActive()) {

@@ -3,6 +3,7 @@
 #include "Border.h"
 #include "SignalPool.h"
 #include "Player.h"
+#include "Resource.h"
 
 class Minimap : public Entity {
 private:

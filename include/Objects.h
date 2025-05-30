@@ -12,9 +12,9 @@ private:
     const float minimalDistance = 100.f;
     const Border* border;
     int layer, order;
-    const int knifeNumber = 25;
-    const int speedNumber = 10;
-    const int healthNumber = 10;
+    const int knifeNumber = 30;
+    const int speedNumber = 8;
+    const int healthNumber = 4;
     bool check(sf :: Vector2f position) const;
     void set(Entity* obj) const;
 public:

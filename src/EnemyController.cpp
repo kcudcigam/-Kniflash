@@ -9,7 +9,8 @@ EnemyController :: EnemyController(const std :: vector<std :: string> &tag) : En
     cy[0] *= (rnd() % 10 + 1), cy[1] *= (rnd() % 10 + 1);
     std :: uniform_real_distribution<float> d(0.1f, 0.6f);
     interval = d(rnd);
-    auto timer = new Timer(0.5f, 0, "", 0, {"timer"});
+    std :: uniform_real_distribution<float> t(0.2f, 2.f);
+    auto timer = new Timer(t(rnd), 0, "", 0, {"timer"});
     addChild(timer);
 }
 EnemyController :: ~EnemyController() {
@@ -54,11 +55,12 @@ void EnemyController :: update(const float &deltaTime) {
         if(cy[i] > maxn) cy[i] = 1;
     }
     auto enemy = signalPool.query(uuid(), "nearest");
-    if(!enemy) {
-        target = 0; return;
-    }
     auto timer = static_cast<Timer*>(find("timer").back());
-    if(enemy != target) timer -> reset();
+    if(!enemy) {
+        target = 0;
+        timer -> reset();
+        return;
+    }
     target = enemy;
     
     if(!timer -> isActive()) {
