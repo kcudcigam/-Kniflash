@@ -10,7 +10,7 @@ class FlyKnife : public Entity {
 private:
     uint64_t owner;
     sf :: Vector2f pos, v;
-    const float velocity = 4500.f, maxd = 1000.f;
+    const float velocity = 4500.f, maxd = 1500.f;
     float delta = 0.f;
 
 public:

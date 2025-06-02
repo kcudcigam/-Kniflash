@@ -7,7 +7,7 @@
 
 class KnifeCircle : public Entity {
 private:
-    const int maxNumber = 40;
+    const int maxNumber = 30;
     float velocity = 200.f, radius = 45.f, delta = 12.f;
 public:
     KnifeCircle(int number = 4, const std :: vector<std :: string> &tag = {});

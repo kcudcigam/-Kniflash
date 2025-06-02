@@ -171,6 +171,7 @@ void Player :: update(const float& deltaTime) {
         if(signalPool.contains(uuid(), "dead")) {
             if(!signalPool.contains(uuid(), "kill")) {
                 signalPool.add(uuid(), "kill");
+                signalPool.add(attacker, "upgrade");
                 static_cast<Statistics*>(root() -> find("statistics").back()) -> add(attacker);
                 static_cast<SoundPlayer*>(find("sound").back()) -> play("dead.wav");
             }
@@ -183,6 +184,11 @@ void Player :: update(const float& deltaTime) {
             }
             //Entity :: update(deltaTime);
             return;
+        }
+        if(signalPool.contains(uuid(), "upgrade")) {
+            signalPool.del(uuid(), "upgrade");
+            static_cast<SoundPlayer*>(find("sound").back()) -> play("add.wav");
+            for(int i = 1; i <= 8; i++) static_cast<KnifeCircle*>(find("knifeCircle").back()) -> add();
         }
 
         static_cast<KillNumber*>(find("killNumber").back()) -> set(static_cast<Statistics*>(root() -> find("statistics").back()) -> query(uuid()));

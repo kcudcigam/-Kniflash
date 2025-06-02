@@ -12,6 +12,7 @@ private:
     float delta = 0.f;
     float attackProbability = 0.f;
     const int maxn = 10;
+    bool targeted = false;
     void move(sf :: Vector2f pos, bool reverse = false);
 public:
     EnemyController(const std :: vector<std :: string> &tag = {});

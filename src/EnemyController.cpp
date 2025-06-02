@@ -9,9 +9,10 @@ EnemyController :: EnemyController(const std :: vector<std :: string> &tag) : En
     cx[0] *= (rnd() % maxn + 1), cx[1] *= (rnd() % maxn + 1);
     cy[0] *= (rnd() % maxn + 1), cy[1] *= (rnd() % maxn + 1);
     std :: uniform_real_distribution<float> d(0.1f, 0.6f);
-    std :: uniform_real_distribution<float> p(0.01f, 0.05f);
+    std :: uniform_real_distribution<float> p(0.05f, 0.1f);
+    std :: uniform_real_distribution<float> t(0.2f, 0.5f);
     interval = d(rnd); attackProbability = p(rnd);
-    auto attackTimer = new Timer(0.4f, 0, "", 0, {"attackTimer"});
+    auto attackTimer = new Timer(t(rnd), 0, "", 0, {"attackTimer"});
     addChild(attackTimer);
     auto updateTimer = new Timer(0.1f, 0, "", 0, {"updateTimer"});
     addChild(updateTimer);
@@ -39,18 +40,20 @@ void EnemyController :: update(const float &deltaTime) {
         const auto pos = getTransform().transformPoint(0.f, 0.f);
         auto border = static_cast<Border*>(root() -> find("border").back());
 
-        auto enemy = signalPool.query(uuid(), "nearest");
+        auto enemy = signalPool.query(uuid(), "nearest"); bool targeted = false;
         if(enemy) {
             auto it = root() -> find(enemy);
             const int u = signalPool.query(super() -> uuid(), "player_health") + signalPool.query(super() -> uuid(), "player_knife");
             const int v = signalPool.query(it -> uuid(), "player_health") + signalPool.query(it -> uuid(), "player_knife");
-            if(signalPool.query(super() -> uuid(), "player_knife") >= v)
-                move(it -> getTransform().transformPoint(0.f, 0.f));
-            if(signalPool.query(it -> uuid(), "player_knife") >= u || u <= 5)
-                move(it -> getTransform().transformPoint(0.f, 0.f), true);
+            move(it -> getTransform().transformPoint(0.f, 0.f), true);
+            std :: uniform_real_distribution<float> p(0.f, 1.f);
+            if(targeted || p(rnd) < attackProbability) {
+                move(it -> getTransform().transformPoint(0.f, 0.f)), targeted = true;
+            }
         }
+        else targeted = false;
 
-        const float maxd = 1200.f;
+        const float maxd = 800.f;
         const auto knifeup = root() -> find("knifeup");
         Entity* res = nullptr;
         for(auto it : knifeup) {
@@ -64,6 +67,7 @@ void EnemyController :: update(const float &deltaTime) {
         //std :: cerr << knifeup.size() std :: endl;
         if(res) {
             move(res -> getTransform().transformPoint(0.f, 0.f));
+            targeted = false;
         }
 
         const auto speedup = root() -> find("speedup");
@@ -78,6 +82,7 @@ void EnemyController :: update(const float &deltaTime) {
         }
         if(res) {
             move(res -> getTransform().transformPoint(0.f, 0.f));
+            targeted = false;
         }
 
         const auto healthup = root() -> find("healthup");
@@ -92,20 +97,21 @@ void EnemyController :: update(const float &deltaTime) {
         }
         if(res && signalPool.query(super() -> uuid(), "player_health") < 5) {
             move(res -> getTransform().transformPoint(0.f, 0.f));
+            targeted = false;
         }
 
         if(enemy) {
             auto it = root() -> find(enemy);
             const int u = signalPool.query(super() -> uuid(), "player_health") + signalPool.query(super() -> uuid(), "player_knife");
             const int v = signalPool.query(it -> uuid(), "player_health") + signalPool.query(it -> uuid(), "player_knife");
-            if(signalPool.query(super() -> uuid(), "player_knife") >= v + 3) {
+            if(signalPool.query(super() -> uuid(), "player_knife") >= v) {
                 move(it -> getTransform().transformPoint(0.f, 0.f));
+                targeted = true;
             }
 
             auto timer = static_cast<Timer*>(find("attackTimer").back());
             if(!timer -> isActive()) {
-                std :: uniform_real_distribution<float> p(0.f, 1.f);
-                if(p(rnd) < attackProbability || signalPool.query(super() -> uuid(), "player_knife") >= v) {
+                if(targeted) {
                     signalPool.add(super() -> uuid(), "attack");
                     timer -> reset();
                 }
@@ -113,7 +119,7 @@ void EnemyController :: update(const float &deltaTime) {
         }
         const auto radius = border -> getRadius() - 3.f;
         if(distance(border -> getBase() - pos) > radius * radius) {
-            move(border -> getBase());
+            move(border -> getBase()); targeted = false;
         }
         
     }

@@ -19,7 +19,7 @@ void Border :: set(sf :: Vector2f base, float radius) {
     auto circle = new sf :: CircleShape(radius + 55.f, 80);
     circle -> setPosition(base - sf :: Vector2f(circle -> getRadius(), circle -> getRadius()));
     circle -> setFillColor(sf :: Color :: Transparent);
-    circle -> setOutlineThickness(2000.f);
+    circle -> setOutlineThickness(5000.f);
     circle -> setOutlineColor(sf :: Color(0, 0, 0, 180));
     addChild(new StaticEntity(circle, layer, order));
 }

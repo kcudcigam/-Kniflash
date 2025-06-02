@@ -78,8 +78,11 @@ void Minimap :: update(const float &deltaTime) {
         if(!static_cast<Player*>(player) -> isActive()) continue;
         auto it = new sf :: RectangleShape(sf :: Vector2f(d, d));
         it -> setOrigin(d / 2, d / 2);
+
+        const int number = (static_cast<KnifeCircle*>(player -> find("knifeCircle").back()) -> getNumber() + 1) / 2;
         if(player -> uuid() == user) it -> setFillColor(sf :: Color :: Green);
-        else it -> setFillColor(sf :: Color :: Red);
+        else it -> setFillColor(sf :: Color(255 - number * 17, number * 8,  number * 17));
+        
         auto pos = (player -> getTransform().transformPoint(0.f, 0.f) - border -> getBase()) * (circleSize / radius);
         pos += sf :: Vector2f(size / 2.f, size / 2.f);
         it -> setPosition(pos);
