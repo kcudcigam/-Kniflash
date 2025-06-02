@@ -11,7 +11,7 @@ Objects :: Objects(const Border* border, int layer, int order, const std :: vect
     const auto healthImg = combineFrame(resource.getImg("props.png"), {10, 37}, {10, 37}, {64, 64}, {32.f, 32.f}).back();
 
     for(int i = 1; i <= knifeNumber; i++) {
-        auto hitbox = new Hitbox(sf :: FloatRect({-64.f, -64.f}, {128.f, 128.f}), "player-hitbox", "knifeup");
+        auto hitbox = new Hitbox(sf :: FloatRect({-64.f, -64.f}, {128.f, 128.f}), "player-hitbox", "knifeup", 0, {"knifeup"});
         set(hitbox);
         auto img = new sf :: Sprite; knifeImg.load(img);
         auto obj = new StaticEntity(img, 1); obj -> transform.scale(2.f, 2.f);
@@ -20,7 +20,7 @@ Objects :: Objects(const Border* border, int layer, int order, const std :: vect
     }
 
     for(int i = 1; i <= speedNumber; i++) {
-        auto hitbox = new Hitbox(sf :: FloatRect({-64.f, -64.f}, {128.f, 128.f}), "player-hitbox", "speedup");
+        auto hitbox = new Hitbox(sf :: FloatRect({-64.f, -64.f}, {128.f, 128.f}), "player-hitbox", "speedup", 0, {"speedup"});
         set(hitbox);
         auto img = new sf :: Sprite; speedImg.load(img);
         auto obj = new StaticEntity(img, 1); obj -> transform.scale(2.f, 2.f);
@@ -29,7 +29,7 @@ Objects :: Objects(const Border* border, int layer, int order, const std :: vect
     }
 
     for(int i = 1; i <= healthNumber; i++) {
-        auto hitbox = new Hitbox(sf :: FloatRect({-64.f, -64.f}, {128.f, 128.f}), "player-hitbox", "healthup");
+        auto hitbox = new Hitbox(sf :: FloatRect({-64.f, -64.f}, {128.f, 128.f}), "player-hitbox", "healthup", 0, {"healthup"});
         set(hitbox);
         auto img = new sf :: Sprite; healthImg.load(img);
         auto obj = new StaticEntity(img, 1); obj -> transform.scale(2.f, 2.f);

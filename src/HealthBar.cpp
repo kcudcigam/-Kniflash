@@ -29,6 +29,9 @@ void HealthBar :: recover() {
     health = maxHealth;;
     static_cast<StaticEntity*>(components.back()) -> set(createImg(health));
 }
+int HealthBar :: getNumber() const {
+    return health;
+}
 void HealthBar :: update(const float &deltaTime) {
     Entity :: update(deltaTime);
     if(health <= 0) {

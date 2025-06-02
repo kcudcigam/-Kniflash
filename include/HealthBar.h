@@ -17,5 +17,6 @@ public:
     void add();
     void inc();
     void recover();
+    int getNumber() const;
     virtual void update(const float &deltaTime);
 };

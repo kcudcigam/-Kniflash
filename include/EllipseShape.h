@@ -15,7 +15,7 @@ public:
         return m_radius;
     }
     std::size_t getPointCount() const override {
-        return 30; // fixed, but could be an attribute of the class if needed
+        return 30;
     }
     sf :: Vector2f getPoint(std :: size_t index) const override {
         static constexpr float pi = 3.141592654f;

@@ -12,6 +12,7 @@ GameScene :: GameScene(sf :: RenderWindow* window) : Entity({}, window) {
     addChild(background);
 
     auto border = new Border({6794.f, 5277.f}, 4500.f, 5, 0, {"border"});
+    //auto border = new Border({6794.f, 5277.f}, 1000.f, 5, 0, {"border"});
     addChild(border);
 
     auto knifeManager = new KnifeManager({"knifeManager"});
@@ -98,6 +99,7 @@ void GameScene :: update(const float& deltaTime) {
     }
     const int border = 4500;
     const int survive = cnt + 1, all = enemyCount + 1;
+    
     if(survive * 2 <= all) {
         signalPool.add(0, "border", border / 2);
     }

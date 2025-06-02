@@ -36,6 +36,7 @@ Player :: Player(const Border* border, const std :: vector<std :: string> &tag, 
         auto healthBar = new HealthBar(uuid(), 3, 0, {"healthbar"});
         healthBar -> transform.translate(-5.f, -100.f).scale(4.f, 5.f);
         addChild(healthBar);
+        signalPool.add(uuid(), "player_health", healthBar -> getNumber());
 
         auto killNumber = new KillNumber(3, 0, {"killNumber"});
         killNumber -> transform.translate(-60.f, -175.f).scale(1.f, 1.f);
@@ -44,6 +45,7 @@ Player :: Player(const Border* border, const std :: vector<std :: string> &tag, 
 
     auto knifeCircle = new KnifeCircle(4, {"knifeCircle"});
     addChild(knifeCircle);
+    signalPool.add(uuid(), "player_knife", knifeCircle -> getNumber());
 
     auto box = new RectEntity(sf :: FloatRect(-64.f, -64.f, 128.f, 128.f), {"player-hitbox"});
     addChild(box);
@@ -236,6 +238,7 @@ void Player :: update(const float& deltaTime) {
             static_cast<DynamicEntity*>(find("regen").back()) -> play("animation");
             static_cast<SoundPlayer*>(find("sound").back()) -> play("regen.wav");
         }
+        signalPool.add(uuid(), "player_health", static_cast<HealthBar*>(find("healthbar").back()) -> getNumber());
     }
 
     signalPool.add(find("controller").back() -> uuid(), "nearest", nearest());
@@ -244,6 +247,7 @@ void Player :: update(const float& deltaTime) {
         if(enemy) attack(enemy -> transform.transformPoint(0.f, 0.f));
         signalPool.del(uuid(), "attack");
     }
+    signalPool.add(uuid(), "player_knife", static_cast<KnifeCircle*>(find("knifeCircle").back()) -> getNumber());
     
     if(!direction) {
         auto reverse = sf :: Transform(); reverse.scale(-1.f, 1.f);

@@ -17,16 +17,12 @@ Game :: Game() : height(1280), width(1920), window(sf :: VideoMode(width, height
     window.setFramerateLimit(120);
     window.setVerticalSyncEnabled(false);
     window.clear();
-
     
     sf :: Texture loadingTexture;
     loadingTexture.loadFromFile("../resource/image/icon/load.png");
     auto animation = combineFrame(&loadingTexture, {0, 0}, {29, 0}, {200, 200}, {100.f, 100.f});
     sf :: Sprite sprite; sprite.setPosition(static_cast<float>(window.getSize().x) / 2, static_cast<float>(window.getSize().y) / 2);
     const float duration = 0.03;
-    //sf :: RectangleShape background;
-    //background.setSize({width, height});
-    //background.setTexture(&loadingTexture);
 
     std :: thread load(loading); load.detach();
     sf :: Clock loadingClock; float delta = 0.f;

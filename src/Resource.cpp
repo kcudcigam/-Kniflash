@@ -1,4 +1,5 @@
 #include "Resource.h"
+#include <iostream>
 
 //Resource
 Resource :: Resource() {
@@ -34,7 +35,7 @@ void Resource :: loadImg(const std :: filesystem :: path &directory) {
         else {
             auto texture = new sf :: Texture(); texture -> loadFromFile(img.path().string());
             this -> img.emplace(img.path().filename().string(), texture);
-            //std :: cerr << img.path().filename().string() << std :: endl;
+            std :: cerr << img.path().filename().string() << std :: endl;
         }
     }
 }
@@ -42,6 +43,7 @@ void Resource :: loadFont(const std :: filesystem ::path &directory) {
     for (const auto &file : std :: filesystem :: directory_iterator(directory)) {
         auto font = new sf :: Font(); font -> loadFromFile(file.path().string());
         this -> font.emplace(file.path().filename().string(), font);
+        std :: cerr << file.path().filename().string() << std :: endl;
     }
 }
 void Resource :: loadSound(const std :: filesystem ::path &directory) {
@@ -59,6 +61,7 @@ void Resource :: loadSound(const std :: filesystem ::path &directory) {
             music -> setPitch(config[file.path().filename().string()]["pitch"].get<float>());
         }
         this -> sound.emplace(file.path().filename().string(), music);
+        std :: cerr << file.path().filename().string() << std :: endl;
     }
 }
 sf :: Texture* Resource :: getImg(const std :: string &file) const {

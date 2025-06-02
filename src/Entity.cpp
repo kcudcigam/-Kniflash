@@ -12,6 +12,8 @@ Entity :: ~Entity() {
     for(auto child : components) {
         delete child;
     }
+    auto p = super();
+    while(p) p -> ids.erase(uuid()), p = p -> super();
 }
 Entity* Entity :: super() {
     return ancestor;
