@@ -98,7 +98,7 @@ void EnemyController :: update(const float &deltaTime) {
             auto it = root() -> find(enemy);
             const int u = signalPool.query(super() -> uuid(), "player_health") + signalPool.query(super() -> uuid(), "player_knife");
             const int v = signalPool.query(it -> uuid(), "player_health") + signalPool.query(it -> uuid(), "player_knife");
-            if((int)signalPool.query(super() -> uuid(), "player_knife") >= v + 3) {
+            if(signalPool.query(super() -> uuid(), "player_knife") >= v + 3) {
                 move(it -> getTransform().transformPoint(0.f, 0.f));
             }
 
