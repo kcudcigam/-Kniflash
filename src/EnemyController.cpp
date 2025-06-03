@@ -1,5 +1,4 @@
 #include "EnemyController.h"
-#include <iostream>
 extern SignalPool signalPool;
 extern std :: mt19937_64 rnd;
 
@@ -64,7 +63,7 @@ void EnemyController :: update(const float &deltaTime) {
             if(!res || dis < distance(res -> getTransform().transformPoint(0.f, 0.f) - pos) )
                 res = it;
         }
-        //std :: cerr << knifeup.size() std :: endl;
+
         if(res) {
             move(res -> getTransform().transformPoint(0.f, 0.f));
             targeted = false;
@@ -123,7 +122,6 @@ void EnemyController :: update(const float &deltaTime) {
         }
         
     }
-    
 
     delta += deltaTime;
     

@@ -1,5 +1,4 @@
 #include "Game.h"
-#include <iostream>
 extern Resource resource;
 extern RenderPool renderPool;
 extern SignalPool signalPool;
@@ -73,7 +72,6 @@ void Game :: update() {
     if(scene) {
         scene -> update(deltaTime);
     }
-    //std :: cerr << deltaTime << std :: endl;
 }
 void Game :: render() {
     if(!window.isOpen()) return;

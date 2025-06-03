@@ -1,5 +1,4 @@
 #include "Resource.h"
-#include <iostream>
 
 //Resource
 Resource :: Resource() {
@@ -17,17 +16,6 @@ void Resource :: loadFrom(const std :: filesystem :: path &directory) {
     loadImg(directory / "image");
     loadFont(directory / "font");
     loadSound(directory / "sound");
-    // for(const std :: string &music : {"menu", "game", "win", "dead"})
-    //     getSound(music + ".wav") -> setLoop(true), getSound(music + ".wav") -> setVolume(5.f);
-    // getSound("footstep.wav") -> setPitch(1.4f);
-    // getSound("footstep.wav") -> setVolume(2.f);
-    // getSound("attack.wav") -> setVolume(40.f);
-    // getSound("metal-small.wav") -> setVolume(20.f);
-    // getSound("metal-ringing.wav") -> setVolume(5.f);
-    // getSound("hit.wav") -> setVolume(10.f);
-    // getSound("door.wav") -> setVolume(4.f);
-    // getSound("pass.wav") -> setVolume(10.f);
-    // getSound("click.wav") -> setVolume(10.f);
 }
 void Resource :: loadImg(const std :: filesystem :: path &directory) {
     for (const auto &img : std :: filesystem :: directory_iterator(directory)) {

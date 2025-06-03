@@ -1,5 +1,4 @@
 #include "Button.h"
-#include <iostream>
 extern SignalPool signalPool;
 extern Resource resource;
 

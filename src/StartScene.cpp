@@ -1,5 +1,4 @@
 #include "StartScene.h"
-#include <iostream>
 extern Resource resource;
 extern SignalPool signalPool;
 

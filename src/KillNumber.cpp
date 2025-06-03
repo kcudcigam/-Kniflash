@@ -14,7 +14,6 @@ void KillNumber :: set(int number) {
     const auto img = combineFrame(resource.getImg("props.png"), {0, 42}, {0, 42}, {64, 64}, {0.f, 0.f}).back();
     auto sprite = new sf :: Sprite; img.load(sprite);
     auto icon = new StaticEntity(sprite, layer, order);
-    //icon -> transform.scale(1.f, 1.f);
     auto character = new sf :: Text(std :: to_wstring(kill), *resource.getFont("font-title.ttf"), 42);
     character -> setOutlineColor(sf :: Color :: Black);
     character -> setOutlineThickness(4.f);

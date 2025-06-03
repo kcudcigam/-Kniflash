@@ -51,8 +51,6 @@ EndScene :: EndScene(sf :: RenderWindow* window, int skin, float clock, std :: p
 
     if(rank.first == 1) resource.getSound("win.ogg") -> play();
     else resource.getSound("over.ogg") -> play();
-
-    //std :: cerr << skin << ' ' << clock << ' ' << rank.first << '/' << rank.second << ' ' << kills << std :: endl;
 }
 EndScene :: ~EndScene() {
     resource.getSound("win.ogg") -> stop();

@@ -14,7 +14,6 @@ private:
     std :: map <std :: string, sf :: Sound*> sound;
     
     void loadImg(const std :: filesystem :: path &directory);
-    void loadMap(const std :: filesystem :: path &directory);
     void loadFont(const std :: filesystem :: path &directory);
     void loadSound(const std :: filesystem :: path &directory);
 public:

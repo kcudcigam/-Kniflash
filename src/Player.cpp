@@ -177,12 +177,10 @@ void Player :: update(const float& deltaTime) {
             }
             static_cast<DynamicEntity*>(find("animation").back()) -> play("dead", true);
             dead = true;
-            //find("healthbar").back() -> update(deltaTime);
             find("animation").back() -> update(deltaTime);
             if(static_cast<DynamicEntity*>(find("animation").back()) -> getAnimation("dead") -> end()) {
                 active = false;
             }
-            //Entity :: update(deltaTime);
             return;
         }
         if(signalPool.contains(uuid(), "upgrade")) {
@@ -197,17 +195,13 @@ void Player :: update(const float& deltaTime) {
         if(signalPool.contains(find("player-hitbox").back() -> uuid(), "speedup")) {
             signalPool.del(find("player-hitbox").back() -> uuid(), "speedup");
             static_cast<Timer*>(find("speedup").back()) -> reset();
-            //static_cast<DynamicEntity*>(find("speedCircle").back()) -> play("animation");
             static_cast<SpriteCopier*>(find("copy").back()) -> set(true);
             static_cast<ShapeCopier*>(find("shadeCopy").back()) -> set(true);
             static_cast<SoundPlayer*>(find("sound").back()) -> play("speedup.wav");
-            //static_cast<StaticEntity*>(find("playerShade").back()) -> setStatus(false);
         }
         if(!signalPool.contains(uuid(), "Inspeedup")) {
-            //static_cast<DynamicEntity*>(find("speedCircle").back()) -> play("");
             static_cast<SpriteCopier*>(find("copy").back()) -> set(false);
             static_cast<ShapeCopier*>(find("shadeCopy").back()) -> set(false);
-            //static_cast<StaticEntity*>(find("playerShade").back()) -> setStatus(true);
         }
         if(signalPool.contains(uuid(), "targeted")) {
             static_cast<StaticEntity*>(find("target").back()) -> setStatus(true);
@@ -298,7 +292,6 @@ void Player :: update(const float& deltaTime) {
     else {
         static_cast<DynamicEntity*>(find("animation").back()) -> play("idle");
     }
-
 
     if(signalPool.contains(uuid(), "Inspeedup")) {
         transform.translate(velocity * (deltaTime * 1.f));

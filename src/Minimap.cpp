@@ -13,7 +13,7 @@ Minimap :: ~Minimap() {
 void Minimap :: hide() {
     active = false;
 }
-#include <iostream>
+
 void Minimap :: update(const float &deltaTime) {
     for(auto child : components) delete child;
     components.clear();
@@ -36,7 +36,6 @@ void Minimap :: update(const float &deltaTime) {
     addChild(new StaticEntity(character, 500));
     
     const float r = circleSize;
-    //circleSize * border -> getRadius() / radius;
     float t = border -> getRadius() * circleSize / radius;
     
     auto background = new sf :: CircleShape(r, 100);
@@ -67,8 +66,6 @@ void Minimap :: update(const float &deltaTime) {
     target -> setOrigin(t, t);
     target -> setPosition(size / 2.f, size / 2.f);
     target -> setFillColor(sf :: Color :: Transparent);
-    //target -> setOutlineThickness(bounds -> getRadius() - target -> getRadius());
-    //target -> setOutlineColor(sf :: Color(0, 0, 0, 220));
     target -> setOutlineThickness(2.f);
     target -> setOutlineColor(sf :: Color(255, 255, 224));
     addChild(new StaticEntity(target, 500, 2));
