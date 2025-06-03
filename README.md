@@ -1,7 +1,5 @@
 ### Kniflash
 
-![demo](C:\Users\ZYX\Desktop\PA2\demo.png)
-
 #### 一. 文件树
 
 ```cpp
