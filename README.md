@@ -1,7 +1,7 @@
 # Kniflash
 
 ![Game.exe Screenshot 2025.09.13 - 13.19.12.03.png](https://s2.loli.net/2025/09/13/h4zymX3LQeK5BNx.png)
-- nju 2025春 高级程序设计大作业，一个简易飞刀对战小游戏
+- 一个简易飞刀对战小游戏
 
 #### 一. 文件树
 
