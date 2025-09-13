@@ -1,5 +1,5 @@
 ### Kniflash
-![](https://sm.ms/image/h4zymX3LQeK5BNx)
+![Game.exe Screenshot 2025.09.13 - 13.19.12.03.png](https://s2.loli.net/2025/09/13/h4zymX3LQeK5BNx.png)
 #### 一. 文件树
 
 ```cpp
